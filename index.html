@@ -1,0 +1,4122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARRIER: OPERATOR HUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CARRIER: OPERATOR HUB - Main Stylesheet
+           ============================================ */
+
+        :root {
+            /* Colors */
+            --hub-bg: #0a0a0c;
+            --hub-surface: #111116;
+            --hub-surface-alt: #18181f;
+            --hub-border: #2a2a35;
+            --hub-text-primary: #f0f0f0;
+            --hub-text-secondary: #888899;
+            --hub-accent: #c9a84c;
+            --hub-accent-dim: rgba(201, 168, 76, 0.12);
+            --hub-danger: #c0292b;
+            --hub-mid: #d4622a;
+            
+            /* Typography */
+            --hub-font-display: 'Rajdhani', sans-serif;
+            --hub-font-body: 'Inter', sans-serif;
+            
+            /* Styling */
+            --hub-card-radius: 8px;
+            --hub-glow-opacity: 0.15;
+        }
+
+        * { box-sizing: border-box; }
+
+        *::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--hub-surface);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--hub-border), var(--hub-accent));
+            border-radius: 8px;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--hub-bg);
+            color: var(--hub-text-primary);
+            font-family: var(--hub-font-body);
+            font-size: 16px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-image: radial-gradient(circle at 15% 20%, rgba(201, 168, 76, 0.08), transparent 45%), radial-gradient(circle at 85% 10%, rgba(192, 41, 43, 0.08), transparent 40%);
+        }
+
+        /* ============================================
+           TOP NAVIGATION BAR
+           ============================================ */
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            height: 70px;
+            border-bottom: 1px solid var(--hub-border);
+            background-color: rgba(10, 10, 12, 0.9);
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        .logo {
+            font-family: var(--hub-font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .logo .subtitle {
+            font-size: 0.75rem;
+            color: var(--hub-accent);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2.5rem;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-tab {
+            font-family: var(--hub-font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 0.5rem;
+            color: var(--hub-text-secondary);
+            transition: color 150ms ease-in-out;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-tab:hover { color: var(--hub-text-primary); }
+        .nav-tab.active { color: var(--hub-text-primary); }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--hub-accent);
+            box-shadow: 0 0 8px var(--hub-accent);
+        }
+
+        .status-tag {
+            font-size: 0.75rem;
+            color: var(--hub-text-secondary);
+            border: 1px solid var(--hub-border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* ============================================
+           MAIN CONTAINER & SECTIONS
+           ============================================ */
+
+        .main-container {
+            margin-top: 70px;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 150ms ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            height: auto;
+            overflow: visible;
+        }
+
+        /* ============================================
+           SHOWCASE SECTION
+           ============================================ */
+
+        #showcase {
+            display: grid;
+            grid-template-columns: 42% 58%;
+            gap: 4rem;
+            align-items: center;
+            min-height: calc(100vh - 120px);
+            animation: fadeIn 300ms ease-in-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .showcase-info {
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            opacity: 1;
+            transition: opacity 200ms ease-in-out;
+            overflow: visible;
+        }
+
+        .faction-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 1.5rem;
+            background-color: var(--hub-surface-alt);
+            border-left: 3px solid var(--faction-accent, var(--hub-accent));
+            align-self: flex-start;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .faction-badge:hover {
+            background-color: var(--hub-surface);
+            transform: translateX(4px);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+            margin-right: 0.5rem;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a1a;
+        }
+
+        .rank-badge.ssr {
+            background: linear-gradient(135deg, #c0292b 0%, #ff6b6b 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(192, 41, 43, 0.5);
+        }
+
+        .rank-badge.sss-plus {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a1a;
+            box-shadow: 0 3px 12px rgba(255, 215, 0, 0.6);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .rank-badge.sr {
+            background: linear-gradient(135deg, #9b59b6 0%, #c39bd3 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(155, 89, 182, 0.5);
+        }
+
+        .rank-badge.r {
+            background: linear-gradient(135deg, #3498db 0%, #5dade2 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(52, 152, 219, 0.5);
+        }
+
+        .rank-badge.f {
+            background: linear-gradient(135deg, #7f8c8d 0%, #bdc3c7 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(127, 140, 141, 0.5);
+        }
+        .rank-badge.ur {
+            background: linear-gradient(135deg, #00c2ff 0%, #4facfe 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(0, 194, 255, 0.55);
+        }
+        .rank-badge.lr {
+            background: linear-gradient(135deg, #ff7a18 0%, #af002d 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(175, 0, 45, 0.55);
+        }
+        .rank-badge.ex {
+            background: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(127, 0, 255, 0.55);
+            text-shadow: 0 0 10px rgba(225, 0, 255, 0.45);
+        }
+
+        .operative-number {
+            font-size: 0.85rem;
+            color: var(--hub-text-secondary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-family: var(--hub-font-display);
+        }
+
+        .character-name {
+            font-family: var(--hub-font-display);
+            font-size: clamp(3rem, 8vw, 68px);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+            color: var(--hub-text-primary);
+            margin: 0.5rem 0;
+            letter-spacing: 0.02em;
+        }
+
+        .character-codename {
+            font-size: 1.1rem;
+            color: var(--faction-accent, var(--hub-accent));
+            font-family: var(--hub-font-body);
+            font-weight: 500;
+            transition: color 300ms ease-in-out;
+        }
+
+        .divider {
+            width: 50px;
+            height: 2px;
+            background-color: var(--faction-accent, var(--hub-accent));
+            margin: 0.5rem 0;
+            transition: background-color 300ms ease-in-out;
+            box-shadow: 0 0 8px var(--faction-accent, var(--hub-accent));
+        }
+
+        .role-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 0.5rem 0;
+        }
+
+        .role-tag {
+            border: 1px solid var(--hub-border);
+            padding: 0.35rem 0.85rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background-color: var(--hub-surface-alt);
+            transition: all 200ms ease-in-out;
+        }
+
+        .role-tag:hover {
+            border-color: var(--hub-accent);
+            color: var(--hub-accent);
+        }
+
+        .character-quote {
+            font-style: italic;
+            color: var(--hub-text-secondary);
+            border-left: 3px solid var(--faction-accent, var(--hub-accent));
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            transition: border-color 300ms ease-in-out;
+        }
+
+        .faction-lore {
+            font-size: 0.9rem;
+            color: var(--hub-text-secondary);
+            max-width: 50ch;
+            line-height: 1.6;
+        }
+
+        .thumbnail-selectors {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .thumbnail {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--hub-surface-alt);
+            border: 2px solid var(--hub-border);
+            cursor: pointer;
+            transition: all 200ms ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--hub-font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            overflow: hidden;
+        }
+
+        .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+        .thumbnail:hover { transform: scale(1.05); border-color: var(--faction-accent, var(--hub-accent)); }
+        .thumbnail.active {
+            border-color: var(--faction-accent, var(--hub-accent));
+            box-shadow: 0 0 20px var(--faction-accent, var(--hub-accent));
+            transform: scale(1.15);
+        }
+
+        .showcase-art {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(0);
+            opacity: 1;
+            transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms ease-in-out;
+            overflow: hidden;
+            border-radius: var(--hub-card-radius);
+            min-height: 520px;
+            border: 1px solid var(--hub-border);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.1));
+        }
+
+        .showcase-art-glow {
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            background: radial-gradient(circle, var(--faction-accent, var(--hub-accent)) 0%, transparent 70%);
+            opacity: var(--hub-glow-opacity);
+            transition: background 300ms ease-in-out;
+            z-index: 0;
+            filter: blur(40px);
+        }
+
+        .character-image {
+            max-width: 78%;
+            max-height: 82%;
+            object-fit: contain;
+            object-position: center center;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+        }
+
+        .image-placeholder {
+            width: 85%;
+            height: 85%;
+            background-color: var(--faction-accent, var(--hub-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--hub-font-display);
+            font-size: clamp(2rem, 10vw, 4rem);
+            color: var(--hub-bg);
+            border-radius: var(--hub-card-radius);
+            z-index: 1;
+            font-weight: 700;
+        }
+
+        .character-watermark {
+            position: absolute;
+            font-family: var(--hub-font-display);
+            font-size: 15vw;
+            font-weight: 700;
+            color: var(--hub-text-primary);
+            opacity: 0.03;
+            z-index: -1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        /* ============================================
+           CREATE SECTION
+           ============================================ */
+
+        #create {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            animation: fadeIn 300ms ease-in-out;
+            align-items: start;
+        }
+
+        .create-form h2, .live-preview h2 {
+            font-family: var(--hub-font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--hub-text-secondary);
+            margin: 0 0 1.5rem 0;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--hub-text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            border-radius: 4px;
+            color: var(--hub-text-primary);
+            font-family: var(--hub-font-body);
+            font-size: 1rem;
+            transition: all 200ms ease-in-out;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+            background-color: var(--hub-surface-alt);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .char-counter {
+            font-size: 0.8rem;
+            color: var(--hub-text-secondary);
+            text-align: right;
+            margin-top: 0.35rem;
+        }
+
+        #custom-faction-group {
+            display: none;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            width: 45px;
+            height: 45px;
+            border: 2px solid var(--hub-border);
+            padding: 2px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: border-color 200ms;
+        }
+
+        input[type="color"]:hover { border-color: var(--hub-accent); }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--hub-accent);
+            color: var(--hub-bg);
+            border: none;
+            border-radius: 4px;
+            font-family: var(--hub-font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: all 200ms ease-in-out;
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--hub-text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn-submit:active { transform: translateY(0); }
+
+        .create-form, .gacha-editor, .theme-builder, .community-themes, .theme-presets {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+            border: 1px solid var(--hub-border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+        }
+
+        .live-preview-card {
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            border-radius: var(--hub-card-radius);
+            padding: 1.5rem;
+            position: sticky;
+            top: 90px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #preview-image-container {
+            width: 100%;
+            height: 200px;
+            background-color: var(--hub-surface-alt);
+            border-radius: var(--hub-card-radius);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px dashed var(--hub-border);
+        }
+
+        #preview-image { width: 100%; height: 100%; object-fit: cover; }
+        #preview-placeholder { color: var(--hub-text-secondary); font-style: italic; font-size: 0.9rem; }
+        #preview-name {
+            font-family: var(--hub-font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 1rem 0 0.5rem 0;
+            min-height: 2rem;
+            letter-spacing: 0.05em;
+        }
+        #preview-codename {
+            color: var(--hub-accent);
+            margin: 0;
+            font-weight: 600;
+            min-height: 1.2rem;
+        }
+
+        /* ============================================
+           ROSTER SECTION
+           ============================================ */
+
+        #roster {
+            animation: fadeIn 300ms ease-in-out;
+            overflow: visible;
+            padding-right: 0.25rem;
+        }
+
+        .roster-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .roster-filters, .roster-sort {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 200ms ease-in-out;
+            font-family: var(--hub-font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-btn:hover { color: var(--hub-text-primary); border-color: var(--hub-accent); }
+        .filter-btn.active {
+            color: var(--hub-text-primary);
+            background-color: var(--hub-surface-alt);
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 12px var(--hub-accent-dim);
+        }
+
+        #roster-count {
+            color: var(--hub-text-secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        #sort-select {
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-family: var(--hub-font-body);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 200ms ease-in-out;
+        }
+
+        #sort-select:focus {
+            outline: none;
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .roster-card {
+            background-color: var(--hub-surface);
+            border-radius: var(--hub-card-radius);
+            overflow: hidden;
+            border: 1px solid var(--hub-border);
+            position: relative;
+            transition: all 200ms ease-in-out;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        .roster-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 0 20px var(--faction-accent, var(--hub-accent));
+            border-color: var(--faction-accent, var(--hub-accent));
+        }
+
+        .roster-card-image-container {
+            height: 250px;
+            width: 100%;
+            background-color: var(--hub-surface-alt);
+            overflow: hidden;
+        }
+
+        .roster-card-image {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 300ms ease-in-out;
+        }
+
+        .roster-card:hover .roster-card-image { transform: scale(1.05); }
+
+        .roster-card-placeholder {
+            height: 250px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--hub-font-display);
+            font-size: 2.5rem;
+            color: var(--hub-bg);
+            font-weight: 700;
+        }
+
+        .roster-card .faction-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2;
+        }
+
+        .roster-card-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .roster-card-name {
+            font-family: var(--hub-font-display);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 1.1;
+            font-weight: 700;
+        }
+
+        .roster-card-codename {
+            color: var(--faction-accent, var(--hub-accent));
+            font-size: 0.85rem;
+            margin: 0.35rem 0 0.75rem 0;
+            font-weight: 600;
+        }
+
+        .roster-card .role-tags {
+            flex-wrap: wrap;
+            margin: 0.75rem 0;
+            gap: 0.5rem;
+        }
+
+        .roster-card .role-tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            font-weight: 600;
+        }
+
+        .roster-card-creator {
+            font-size: 0.8rem;
+            color: var(--hub-text-secondary);
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        .btn-delete {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 150ms, background 150ms;
+            font-size: 1.2rem;
+            line-height: 28px;
+            text-align: center;
+            z-index: 3;
+            font-weight: 700;
+        }
+
+        .btn-delete:hover { background: var(--hub-danger); }
+        .roster-card:hover .btn-delete { opacity: 1; }
+
+        /* ============================================
+           GACHA SECTION
+           ============================================ */
+
+        #gacha {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeIn 300ms ease-in-out;
+            align-items: start;
+        }
+
+        .gacha-display {
+            position: relative;
+            background: linear-gradient(135deg, var(--hub-surface) 0%, var(--hub-surface-alt) 100%);
+            border: 1px solid var(--hub-border);
+            border-radius: var(--hub-card-radius);
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .gacha-display.rolling {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+        }
+
+        .gacha-roll-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .gacha-roll-container.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .gacha-section-faction {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-right: 2px solid var(--hub-border);
+        }
+
+        .gacha-faction-logo {
+            font-family: var(--hub-font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--faction-accent, var(--hub-accent));
+            text-shadow: 0 0 20px var(--faction-accent, var(--hub-accent));
+            letter-spacing: 0.1em;
+        }
+
+        .gacha-section-character {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, var(--hub-surface-alt) 0%, transparent 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gacha-character-art {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.6));
+        }
+
+        .gacha-character-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--faction-accent, var(--hub-accent)) 0%, transparent 70%);
+            opacity: 0.2;
+            filter: blur(50px);
+            z-index: 0;
+        }
+
+        .gacha-section-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 2px solid var(--hub-border);
+        }
+
+        .gacha-info-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .gacha-info-faction {
+            font-size: 0.9rem;
+            color: var(--faction-accent, var(--hub-accent));
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .gacha-info-name {
+            font-family: var(--hub-font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0.5rem 0;
+            line-height: 1;
+            color: var(--hub-text-primary);
+        }
+
+        .gacha-info-codename {
+            color: var(--faction-accent, var(--hub-accent));
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .gacha-info-roles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .gacha-info-role-tag {
+            border: 1px solid var(--hub-border);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .gacha-info-quote {
+            font-style: italic;
+            color: var(--hub-text-secondary);
+            border-left: 3px solid var(--faction-accent, var(--hub-accent));
+            padding-left: 1rem;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .gacha-editor {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .gacha-editor h2 {
+            font-family: var(--hub-font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--hub-text-secondary);
+            margin: 0 0 1rem 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .gacha-roll-sequence {
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            border-radius: var(--hub-card-radius);
+            padding: 1.5rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .gacha-roll-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: var(--hub-surface-alt);
+            border-left: 3px solid var(--faction-accent, var(--hub-accent));
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .gacha-roll-item-info {
+            flex: 1;
+        }
+
+        .gacha-roll-item-name {
+            font-weight: 700;
+            color: var(--hub-text-primary);
+            display: block;
+        }
+
+        .gacha-roll-item-faction {
+            font-size: 0.8rem;
+            color: var(--hub-text-secondary);
+        }
+
+        .gacha-roll-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .gacha-btn-small {
+            background: none;
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 150ms ease-in-out;
+        }
+
+        .gacha-btn-small:hover {
+            border-color: var(--hub-accent);
+            color: var(--hub-accent);
+            background-color: var(--hub-surface);
+        }
+
+        .gacha-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .gacha-control-section h3 {
+            font-family: var(--hub-font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--hub-text-secondary);
+            margin: 0 0 1rem 0;
+            letter-spacing: 0.05em;
+        }
+
+        .gacha-control-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .gacha-control-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--hub-text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .gacha-control-input {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+            border-radius: 4px;
+            font-family: var(--hub-font-body);
+            font-size: 0.9rem;
+            transition: all 150ms ease-in-out;
+        }
+
+        .gacha-control-input:focus {
+            outline: none;
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        .gacha-control-select {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+            border-radius: 4px;
+            font-family: var(--hub-font-body);
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .gacha-control-select:focus {
+            outline: none;
+            border-color: var(--hub-accent);
+        }
+
+        .gacha-slider-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .gacha-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--hub-border);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .gacha-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--hub-accent);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        .gacha-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--hub-accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        .gacha-slider-value {
+            min-width: 45px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--hub-text-secondary);
+        }
+
+        .gacha-button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .gacha-btn-primary, .gacha-btn-secondary {
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: var(--hub-font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            transition: all 200ms ease-in-out;
+            letter-spacing: 0.05em;
+            font-size: 0.95rem;
+        }
+
+        .gacha-btn-primary {
+            background-color: var(--hub-accent);
+            color: var(--hub-bg);
+            grid-column: 1 / -1;
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
+        }
+
+        .gacha-btn-primary:hover {
+            background-color: var(--hub-text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(201, 168, 76, 0.3);
+        }
+
+        .gacha-btn-secondary {
+            background-color: var(--hub-surface-alt);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+        }
+
+        .gacha-btn-secondary:hover {
+            border-color: var(--hub-accent);
+            background-color: var(--hub-surface);
+            color: var(--hub-accent);
+        }
+
+        @keyframes gachaSlideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes gachaSlideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes gachaSlideInTop {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes gachaSlideInBottom {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes gachaZoomIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes gachaRotateIn {
+            from { transform: rotate(-30deg) scale(0.3); opacity: 0; }
+            to { transform: rotate(0) scale(1); opacity: 1; }
+        }
+
+        /* ============================================
+           GACHA CUTSCENE SYSTEM
+           ============================================ */
+
+        .gacha-cutscene-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10,10,12,0.95) 0%, rgba(17,17,22,0.95) 100%);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gacha-cutscene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%);
+        }
+
+        /* Beat 1: Pull Flash */
+        @keyframes beatPullFlash {
+            0% { background-color: rgba(255, 255, 255, 0); opacity: 0; }
+            10% { background-color: rgba(255, 255, 255, 1); opacity: 1; }
+            15% { background-color: rgba(255, 255, 255, 0); opacity: 0; }
+            100% { background-color: rgba(255, 255, 255, 0); opacity: 0; }
+        }
+
+        @keyframes beatEnergyBurst {
+            0% { transform: scale(0); opacity: 0; }
+            20% { transform: scale(1); opacity: 1; }
+            40% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .gacha-beat-1-flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            animation: beatPullFlash 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+
+        .gacha-beat-1-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            margin: -200px 0 0 -200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 168, 76, 0.8) 0%, transparent 100%);
+            animation: beatEnergyBurst 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* Beat 2: Faction Logo */
+        @keyframes beatLogoSlam {
+            0% { transform: scale(0.3) translateY(-100%); opacity: 0; filter: blur(20px); }
+            50% { transform: scale(1.1) translateY(0); opacity: 1; filter: blur(0); }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes beatCameraShake {
+            0%, 100% { transform: translate(0, 0) rotate(0); }
+            10% { transform: translate(-5px, -5px) rotate(0.5deg); }
+            20% { transform: translate(5px, -5px) rotate(-0.5deg); }
+            30% { transform: translate(-3px, 3px) rotate(0.3deg); }
+            40% { transform: translate(3px, 3px) rotate(-0.3deg); }
+            50% { transform: translate(0, 0) rotate(0); }
+        }
+
+        .gacha-beat-2-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: beatLogoSlam 2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .gacha-faction-logo-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 40px var(--faction-accent, var(--hub-accent))) 
+                    drop-shadow(0 0 80px rgba(201, 168, 76, 0.5));
+        }
+
+        .gacha-cutscene.shaking {
+            animation: beatCameraShake 0.6s ease-in-out 0.5s forwards;
+        }
+
+        /* Beat 3: Environment Build */
+        @keyframes beatEnvironmentFill {
+            0% { opacity: 0; }
+            20% { opacity: 0; }
+            40% { opacity: 0.4; }
+            100% { opacity: 0.8; }
+        }
+
+        .gacha-beat-3-environment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, var(--faction-accent, var(--hub-accent)) 0%, transparent 80%);
+            animation: beatEnvironmentFill 2.5s ease-in-out 1.8s forwards;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Beat 4: Character Entrance */
+        @keyframes beatCharacterSlideRight {
+            0% { transform: translateX(-150%); opacity: 0; }
+            20% { transform: translateX(-150%); opacity: 0; }
+            60% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes beatCharacterSlideLeft {
+            0% { transform: translateX(150%); opacity: 0; }
+            20% { transform: translateX(150%); opacity: 0; }
+            60% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes beatCharacterSlideUp {
+            0% { transform: translateY(150%); opacity: 0; }
+            20% { transform: translateY(150%); opacity: 0; }
+            60% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes beatCharacterFadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            20% { opacity: 0; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes beatCharacterIdleSway {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(0.5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(8px) rotate(-0.5deg); }
+        }
+
+        @keyframes beatChromaticAberration {
+            0% { filter: drop-shadow(0 0 0 rgba(255,0,0,0.3)) drop-shadow(0 0 0 rgba(0,255,255,0.3)); }
+            50% { filter: drop-shadow(3px 0 5px rgba(255,0,0,0.5)) drop-shadow(-3px 0 5px rgba(0,255,255,0.5)); }
+            100% { filter: drop-shadow(0 0 0 rgba(255,0,0,0)); }
+        }
+
+        .gacha-beat-4-character {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .gacha-beat-4-character.entrance-right {
+            animation: beatCharacterSlideRight 3s cubic-bezier(0.25, 1, 0.5, 1) 3s forwards;
+        }
+
+        .gacha-beat-4-character.entrance-left {
+            animation: beatCharacterSlideLeft 3s cubic-bezier(0.25, 1, 0.5, 1) 3s forwards;
+        }
+
+        .gacha-beat-4-character.entrance-up {
+            animation: beatCharacterSlideUp 3s cubic-bezier(0.25, 1, 0.5, 1) 3s forwards;
+        }
+
+        .gacha-beat-4-character.entrance-fade {
+            animation: beatCharacterFadeIn 2.5s ease-out 3s forwards;
+        }
+
+        .gacha-beat-4-character.with-chromatic {
+            animation: beatCharacterSlideRight 3s cubic-bezier(0.25, 1, 0.5, 1) 3s, 
+                       beatChromaticAberration 0.4s ease-out 5.8s forwards;
+        }
+
+        .gacha-beat-4-character img {
+            max-height: 90%;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.8));
+        }
+
+        /* Beat 5: Info Reveal */
+        @keyframes beatFadein {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes beatSlideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes beatSlideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes beatScale {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes beatCountUp {
+            0% { content: "00"; opacity: 0; }
+            50% { opacity: 1; }
+            100% { content: "01"; opacity: 1; }
+        }
+
+        .gacha-beat-5-info {
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
+            right: 5%;
+            max-width: 900px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .gacha-beat-5-faction {
+            font-size: 0.9rem;
+            color: var(--faction-accent, var(--hub-accent));
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: beatSlideUp 0.6s ease-out 6.2s forwards;
+        }
+
+        .gacha-beat-5-operative {
+            font-size: 0.85rem;
+            color: var(--hub-text-secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.75rem;
+            opacity: 0;
+            animation: beatSlideUp 0.6s ease-out 6.4s forwards;
+        }
+
+        .gacha-beat-5-name {
+            font-family: var(--hub-font-display);
+            font-size: clamp(3rem, 8vw, 80px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0.5rem 0;
+            line-height: 1;
+            color: var(--hub-text-primary);
+            letter-spacing: 0.02em;
+            opacity: 0;
+            animation: beatScale 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 6.6s forwards;
+        }
+
+        .gacha-beat-5-codename {
+            color: var(--faction-accent, var(--hub-accent));
+            font-weight: 600;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: beatSlideUp 0.6s ease-out 6.8s forwards;
+        }
+
+        .gacha-beat-5-roles {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            opacity: 0;
+            animation: beatFadein 0.6s ease-out 7s forwards;
+        }
+
+        .gacha-beat-5-role-tag {
+            border: 1px solid var(--hub-border);
+            padding: 0.35rem 0.85rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            animation: beatSlideUp 0.5s ease-out forwards;
+        }
+
+        .gacha-beat-5-role-tag:nth-child(1) { animation-delay: 7.1s; }
+        .gacha-beat-5-role-tag:nth-child(2) { animation-delay: 7.3s; }
+        .gacha-beat-5-role-tag:nth-child(3) { animation-delay: 7.5s; }
+
+        .gacha-beat-5-quote {
+            font-style: italic;
+            color: var(--hub-text-secondary);
+            border-left: 3px solid var(--faction-accent, var(--hub-accent));
+            padding-left: 1.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            max-width: 80%;
+            opacity: 0;
+            animation: beatSlideUp 0.8s ease-out 7.8s forwards;
+        }
+
+        /* Beat 6: Idle Animation */
+        .gacha-beat-4-character.with-idle {
+            animation: beatCharacterSlideRight 3s cubic-bezier(0.25, 1, 0.5, 1) 3s, 
+                       beatCharacterIdleSway 3s ease-in-out 6s infinite;
+        }
+
+        /* Cutscene Close Button */
+        .gacha-cutscene-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            z-index: 1000;
+            transition: all 150ms ease-in-out;
+            opacity: 0;
+            animation: beatFadein 0.6s ease-out 9s forwards;
+        }
+
+        .gacha-cutscene-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: var(--hub-accent);
+            color: var(--hub-accent);
+        }
+
+        /* ============================================
+           THEMES SECTION
+           ============================================ */
+
+        #themes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeIn 300ms ease-in-out;
+            align-items: start;
+        }
+
+        .theme-presets h2, .theme-builder h2, .community-themes h2 {
+            font-family: var(--hub-font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--hub-text-secondary);
+            margin: 0 0 1.5rem 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .preset-card {
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            border-radius: var(--hub-card-radius);
+            padding: 1.25rem;
+            transition: all 200ms ease-in-out;
+            cursor: pointer;
+        }
+
+        .preset-card:hover {
+            border-color: var(--hub-accent);
+            background-color: var(--hub-surface-alt);
+        }
+
+        .preset-card.active {
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 16px var(--hub-accent-dim);
+            background-color: var(--hub-surface-alt);
+        }
+
+        .preset-card h3 {
+            margin: 0 0 1rem 0;
+            font-family: var(--hub-font-display);
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .color-swatches {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--hub-border);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-apply-theme {
+            width: 100%;
+            padding: 0.65rem;
+            background-color: var(--hub-surface-alt);
+            color: var(--hub-text-primary);
+            border: 1px solid var(--hub-border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--hub-font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            transition: all 200ms ease-in-out;
+        }
+
+        .btn-apply-theme:hover {
+            border-color: var(--hub-accent);
+            color: var(--hub-accent);
+            background-color: var(--hub-surface);
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        .theme-editor .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .theme-editor .form-group label {
+            margin: 0;
+            font-family: monospace;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            min-width: 150px;
+        }
+
+        .theme-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .community-themes {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+        }
+
+        .community-themes p {
+            margin: 0 0 1rem 0;
+            color: var(--hub-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .community-themes textarea {
+            width: 100%;
+            min-height: 150px;
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            color: var(--hub-text-primary);
+            font-family: monospace;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 200ms ease-in-out;
+            resize: vertical;
+        }
+
+        .community-themes textarea:focus {
+            outline: none;
+            border-color: var(--hub-accent);
+            box-shadow: 0 0 8px var(--hub-accent-dim);
+        }
+
+        /* ============================================
+           MODAL SYSTEM
+           ============================================ */
+
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 300ms ease-in-out;
+        }
+
+        .modal-content {
+            background-color: var(--hub-bg);
+            width: 90%;
+            max-width: 1400px;
+            height: 90vh;
+            border-radius: var(--hub-card-radius);
+            border: 1px solid var(--hub-border);
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .modal-content #showcase {
+            height: 100%;
+            min-height: 0;
+        }
+
+        .modal-content .character-image {
+            max-width: 68%;
+            max-height: 78%;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: var(--hub-text-primary);
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+            line-height: 1;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 200ms ease-in-out;
+        }
+
+        .btn-close-modal:hover {
+            background: var(--hub-accent);
+            color: var(--hub-bg);
+        }
+
+        /* Toast notifications */
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+
+        /* ============================================
+           NEW EXPANSION SYSTEMS - STYLING
+           ============================================ */
+
+        .achievement-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #6bcf7f, #4ecdc4);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--hub-bg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0.25rem;
+            box-shadow: 0 2px 8px rgba(107, 207, 127, 0.3);
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--hub-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--hub-accent), #6bcf7f);
+            transition: width 300ms ease-out;
+        }
+
+        .synergy-indicator {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(135deg, #6bcf7f, #9ef01a);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--hub-bg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .relationship-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background-color: var(--hub-surface);
+            border: 1px solid var(--hub-border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+
+        @media (max-width: 1200px) {
+            #showcase {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 2rem;
+            }
+            .showcase-art { height: 50vh; min-height: 400px; }
+            .character-name { font-size: 3rem; }
+            #create { grid-template-columns: 1fr; }
+            .live-preview-card { position: static; margin-top: 2rem; }
+            #themes { grid-template-columns: 1fr; }
+            #gacha { grid-template-columns: 1fr; }
+            .gacha-display { height: 400px; }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 1rem;
+                height: auto;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .nav-tabs {
+                position: static;
+                transform: none;
+                gap: 1.5rem;
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--hub-border);
+            }
+            .logo { font-size: 1.2rem; }
+            .logo .subtitle { display: none; }
+            .status-tag { display: none; }
+            .main-container { margin-top: 140px; padding: 1rem; min-height: calc(100vh - 140px); }
+            .roster-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .roster-controls { flex-direction: column; align-items: stretch; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-tab { font-size: 0.8rem; }
+            .character-name { font-size: 2rem; }
+            .roster-grid { grid-template-columns: 1fr; }
+            .preset-grid { grid-template-columns: 1fr; }
+            .theme-actions { grid-template-columns: 1fr; }
+            .modal-content { width: 95%; height: 95vh; }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="logo">OPERATOR HUB <span class="subtitle">CARRIER</span></div>
+        <nav class="nav-tabs">
+            <div class="nav-tab active" data-tab="showcase">SHOWCASE</div>
+            <div class="nav-tab" data-tab="create">CREATE</div>
+            <div class="nav-tab" data-tab="roster">ROSTER</div>
+            <div class="nav-tab" data-tab="gacha">GACHA</div>
+            <div class="nav-tab" data-tab="analytics">ANALYTICS</div>
+            <div class="nav-tab" data-tab="themes">THEMES</div>
+        </nav>
+        <div class="status-tag">COMMUNITY BUILD v0.1</div>
+    </header>
+
+    <main class="main-container">
+        <section id="showcase" class="section active">
+            <div class="showcase-info">
+                <div class="faction-badge"></div>
+                <div class="operative-number"></div>
+                <div class="character-name"></div>
+                <div class="character-codename"></div>
+                <div class="divider"></div>
+                <div class="role-tags"></div>
+                <div class="character-quote"></div>
+                <div class="faction-lore"></div>
+                <div class="thumbnail-selectors"></div>
+            </div>
+            <div class="showcase-art">
+                <div class="showcase-art-glow"></div>
+                <div class="character-watermark"></div>
+                <img src="" alt="Character Art" class="character-image" style="display: none;">
+                <div class="image-placeholder" style="display: none;"></div>
+            </div>
+        </section>
+
+        <section id="create" class="section">
+            <div class="create-form">
+                <h2>Creator Hub</h2>
+                <form id="character-form">
+                    <div class="form-group">
+                        <label for="char-name">Character Name</label>
+                        <input type="text" id="char-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-codename">Codename / Title</label>
+                        <input type="text" id="char-codename" value="// " required>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-faction">Faction</label>
+                        <select id="char-faction">
+                            <option value="ORDINAL">ORDINAL</option>
+                            <option value="INTERLUDE">INTERLUDE</option>
+                            <option value="CARDINAL">CARDINAL</option>
+                            <option value="CUSTOM">CUSTOM</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="custom-faction-group">
+                        <input type="text" id="custom-faction-name" placeholder="Custom Faction Name">
+                        <input type="color" id="custom-faction-color" value="#c9a84c">
+                        <input type="file" id="custom-faction-logo" accept="image/png, image/jpeg, image/webp, image/svg+xml">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-roles">Role Tags (comma separated)</label>
+                        <input type="text" id="char-roles" placeholder="e.g. Engineer, Support">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-rank">Rank</label>
+                        <select id="char-rank">
+                            <option value="F">F</option>
+                            <option value="R">R</option>
+                            <option value="SR">SR</option>
+                            <option value="SSR">SSR</option>
+                            <option value="SSS+">SSS+</option>
+                            <option value="UR">UR</option>
+                            <option value="LR">LR</option>
+                            <option value="EX">EX</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-quote">Quote</label>
+                        <textarea id="char-quote" maxlength="180"></textarea>
+                        <div class="char-counter" id="quote-counter">0 / 180</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-lore">Faction Lore Blurb</label>
+                        <textarea id="char-lore" maxlength="120"></textarea>
+                        <div class="char-counter" id="lore-counter">0 / 120</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-art">Character Art (.png, .jpg, .webp)</label>
+                        <input type="file" id="char-art" accept="image/png, image/jpeg, image/webp">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-gallery">Character Gallery Images (Optional, 3+ recommended)</label>
+                        <input type="file" id="char-gallery" accept="image/png, image/jpeg, image/webp" multiple>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-bg-videos">Background Videos (Optional, 1-2 MP4/WebM)</label>
+                        <input type="file" id="char-bg-videos" accept="video/mp4,video/webm" multiple>
+                    </div>
+                    <div class="form-group">
+                        <label for="char-bg-cover">Background Cover Image (Optional)</label>
+                        <input type="file" id="char-bg-cover" accept="image/png, image/jpeg, image/webp">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-origin">Originated from (Optional game/TV series)</label>
+                        <input type="text" id="char-origin" placeholder="e.g. Arcane, Honkai, Original IP">
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-name">Creator Name</label>
+                        <input type="text" id="creator-name" required>
+                    </div>
+                    <button type="submit" class="btn-submit">ADD TO ROSTER</button>
+                </form>
+            </div>
+            <div class="live-preview">
+                <h2>Card Preview</h2>
+                <div class="live-preview-card">
+                    <div id="preview-image-container">
+                        <img id="preview-image" src="" style="display: none;">
+                        <span id="preview-placeholder">Image Preview</span>
+                    </div>
+                    <div id="preview-faction-badge" class="faction-badge" style="display: none;"></div>
+                    <h3 id="preview-name">CHARACTER NAME</h3>
+                    <p id="preview-codename">// CODENAME</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="roster" class="section">
+            <div class="roster-controls">
+                <div class="roster-filters">
+                    <button class="filter-btn active" data-filter="ALL">ALL</button>
+                    <button class="filter-btn" data-filter="ORDINAL">ORDINAL</button>
+                    <button class="filter-btn" data-filter="INTERLUDE">INTERLUDE</button>
+                    <button class="filter-btn" data-filter="CARDINAL">CARDINAL</button>
+                    <button class="filter-btn" data-filter="CUSTOM">CUSTOM</button>
+                </div>
+                <div id="roster-count">0 OPERATIVES REGISTERED</div>
+                <div class="roster-sort">
+                    <label for="sort-select">Sort:</label>
+                    <select id="sort-select">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="az">A-Z</option>
+                    </select>
+                </div>
+            </div>
+            <div class="roster-grid"></div>
+        </section>
+
+        <section id="gacha" class="section">
+            <div class="gacha-display" id="gacha-display">
+                <div style="color: var(--hub-text-secondary); text-align: center;">
+                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">Add characters and press ROLL to begin</p>
+                </div>
+            </div>
+
+            <div class="gacha-editor">
+                <div>
+                    <h2>Roll Sequence</h2>
+                    <div class="gacha-roll-sequence" id="gacha-sequence">
+                        <p style="color: var(--hub-text-secondary); font-style: italic;">No characters added yet</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--hub-text-secondary); margin: 0 0 0.75rem 0; font-weight: 700; font-size: 1rem;">Add Character</h3>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; margin-bottom: 1.5rem;">
+                        <select id="gacha-character-select" class="gacha-control-select">
+                            <option value="">Select a character...</option>
+                        </select>
+                        <button id="gacha-btn-add-character" class="gacha-btn-secondary" style="grid-column: auto;">ADD</button>
+                    </div>
+                </div>
+
+                <div class="gacha-controls">
+                    <div class="gacha-control-section">
+                        <h3>Animation</h3>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Direction</label>
+                            <select id="gacha-direction" class="gacha-control-select">
+                                <option value="right">Right to Left</option>
+                                <option value="left">Left to Right</option>
+                                <option value="top">Top to Bottom</option>
+                                <option value="bottom">Bottom to Top</option>
+                                <option value="zoom">Zoom In</option>
+                                <option value="rotate">Rotate In</option>
+                            </select>
+                        </div>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Easing</label>
+                            <select id="gacha-easing" class="gacha-control-select">
+                                <option value="ease-out">Ease Out</option>
+                                <option value="ease-in">Ease In</option>
+                                <option value="ease-in-out">Ease In Out</option>
+                                <option value="linear">Linear</option>
+                                <option value="cubic-bezier(0.68, -0.55, 0.265, 1.55)">Bounce</option>
+                            </select>
+                        </div>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Duration (ms)</label>
+                            <div class="gacha-slider-group">
+                                <input type="range" id="gacha-duration" class="gacha-slider" min="300" max="3000" step="100" value="1200">
+                                <span class="gacha-slider-value" id="gacha-duration-display">1200ms</span>
+                            </div>
+                        </div>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Delay Between Rolls (ms)</label>
+                            <div class="gacha-slider-group">
+                                <input type="range" id="gacha-delay" class="gacha-slider" min="500" max="3000" step="100" value="1200">
+                                <span class="gacha-slider-value" id="gacha-delay-display">1200ms</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gacha-control-section">
+                        <h3>Audio</h3>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Background Music</label>
+                            <input type="file" id="gacha-music" class="gacha-control-input" accept="audio/*">
+                            <small style="color: var(--hub-text-secondary); display: block; margin-top: 0.35rem;">Optional: MP3, WAV, OGG</small>
+                        </div>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Roll SFX</label>
+                            <input type="file" id="gacha-sfx" class="gacha-control-input" accept="audio/*">
+                            <small style="color: var(--hub-text-secondary); display: block; margin-top: 0.35rem;">Optional: Plays on each roll</small>
+                        </div>
+                    </div>
+                    <div class="gacha-control-section">
+                        <h3>Typography</h3>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Display Font</label>
+                            <input type="text" id="font-display-input" class="gacha-control-input" placeholder="e.g. Orbitron, sans-serif">
+                        </div>
+                        <div class="gacha-control-group">
+                            <label class="gacha-control-label">Body Font</label>
+                            <input type="text" id="font-body-input" class="gacha-control-input" placeholder="e.g. Inter, sans-serif">
+                        </div>
+                        <button id="gacha-btn-apply-fonts" class="gacha-btn-secondary" style="width: 100%;">Apply Fonts</button>
+                    </div>
+                </div>
+
+                <div class="gacha-customization" style="margin-top: 2rem; padding: 1.5rem; background: var(--hub-surface-alt); border: 1px solid var(--hub-border); border-radius: 8px;">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem;">Cutscene Customization</h3>
+                    <p style="color: var(--hub-text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">Save custom cutscene HTML/CSS/JS to this character's roster entry</p>
+                    
+                    <div style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; color: var(--hub-text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">Custom HTML</label>
+                            <textarea id="gacha-custom-html" placeholder="<!-- Optional custom HTML for info section -->" style="width: 100%; height: 100px; padding: 0.75rem; background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 4px; color: var(--hub-text-primary); font-family: monospace; font-size: 0.85rem; resize: vertical;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--hub-text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">Custom CSS</label>
+                            <textarea id="gacha-custom-css" placeholder="/* Optional custom CSS for this character's cutscene */" style="width: 100%; height: 100px; padding: 0.75rem; background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 4px; color: var(--hub-text-primary); font-family: monospace; font-size: 0.85rem; resize: vertical;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button id="gacha-btn-save-custom" class="gacha-btn-primary" style="width: 100%; margin-top: 1rem;">💾 Save Cutscene to Current Character</button>
+                </div>
+
+                <div class="gacha-button-group">
+                    <button id="gacha-btn-preview" class="gacha-btn-secondary">Preview</button>
+                    <button id="gacha-btn-reset" class="gacha-btn-secondary">Reset</button>
+                    <button id="gacha-btn-roll" class="gacha-btn-primary">🎲 ROLL 🎲</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="section" style="display: flex; flex-direction: column; gap: 2rem; animation: fadeIn 300ms ease-in-out;">
+            <h1 style="font-family: var(--hub-font-display); font-size: 2rem; text-transform: uppercase; letter-spacing: 0.1em; margin: 0; color: var(--hub-text-primary);">Operative Analytics</h1>
+            
+            <div id="analytics-collection"></div>
+            <div id="analytics-achievements"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h2 style="font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--hub-text-secondary); margin: 0 0 1.5rem 0; font-weight: 700; font-size: 1.2rem;">Rank Distribution</h2>
+                    <div id="analytics-rank-chart" style="background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 8px; padding: 1.5rem;"></div>
+                </div>
+                
+                <div>
+                    <h2 style="font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--hub-text-secondary); margin: 0 0 1.5rem 0; font-weight: 700; font-size: 1.2rem;">Faction Breakdown</h2>
+                    <div id="analytics-faction-chart" style="background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 8px; padding: 1.5rem;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <h2 style="font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--hub-text-secondary); margin: 0 0 1.5rem 0; font-weight: 700; font-size: 1.2rem;">Top Operatives by Stats</h2>
+                <div id="analytics-top-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;"></div>
+            </div>
+        </section>
+
+        <section id="themes" class="section">
+            <div class="theme-presets">
+                <h2>Preset Themes</h2>
+                <div class="preset-grid"></div>
+            </div>
+            <div class="theme-builder">
+                <h2>Custom Theme Builder</h2>
+                <div class="theme-editor"></div>
+                <div class="theme-actions">
+                    <button id="btn-save-custom" class="btn-apply-theme">Save as Custom</button>
+                    <button id="btn-copy-css" class="btn-apply-theme">Copy CSS</button>
+                    <button id="btn-reset-theme" class="btn-apply-theme">Reset to Default</button>
+                </div>
+            </div>
+            <div class="community-themes">
+                <h2>Community Themes</h2>
+                <p>Paste a :root{} CSS block below to load a community theme.</p>
+                <textarea id="community-css-input" placeholder=":root { ... }"></textarea>
+                <button id="btn-load-community-theme" class="btn-apply-theme" style="margin-top: 1rem;">Load Theme</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-container" class="modal-container" style="display: none;"></div>
+
+    <script>
+        // ============================================
+        // DATA & CONFIGURATION
+        // ============================================
+
+        const DEFAULT_CHARACTERS = [
+            { id: "default-1", name: "SEREN", codename: "POINT OF CONTACT", faction: "ORDINAL", accentColor: "#c9a84c", roles: ["Engineer", "Support"], rank: "SSR", quote: "I'm not fixing the system. I'm documenting exactly how it failed so nobody gets to pretend it didn't.", lore: "ORDINAL governs Calore with total conviction. They believe control is the only thing keeping seven million people alive.", imagePath: "./assets/seren.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-2", name: "MAREN", codename: "STANDING ORDER", faction: "ORDINAL", accentColor: "#c9a84c", roles: ["Tank", "Defender"], rank: "SSR", quote: "You asked me to protect you. I didn't say from what.", lore: "ORDINAL governs Calore with total conviction. They believe control is the only thing keeping seven million people alive.", imagePath: "./assets/maren.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-3", name: "LIOR", codename: "WORKING TITLE", faction: "ORDINAL", accentColor: "#c9a84c", roles: ["Tactician", "DPS"], rank: "SR", quote: "The mission doesn't care about your feelings. I at least warned you.", lore: "ORDINAL governs Calore with total conviction. They believe control is the only thing keeping seven million people alive.", imagePath: "./assets/lior.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-4", name: "CORVIN", codename: "REASONABLE FORCE", faction: "INTERLUDE", accentColor: "#d4622a", roles: ["Heavy Fighter", "Bruiser"], rank: "SSS+", quote: "I've been called a weapon so many times I stopped correcting people.", lore: "INTERLUDE operates between the cracks — deserters ORDINAL declared lost causes.", imagePath: "./assets/corvin.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-5", name: "SOLÈNE", codename: "THE MATINEE", faction: "CARDINAL", accentColor: "#c0292b", roles: ["Disruptor", "Anomaly"], rank: "SSS+", quote: "Order doesn't come from above. It comes from everyone agreeing to look away.", lore: "CARDINAL's goals are unknown. They are the only faction unbothered by The Static.", imagePath: "./assets/solene.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-6", name: "IDRIS", codename: "OFF THE RECORD", faction: "ORDINAL", accentColor: "#c9a84c", roles: ["Wildcard", "Assassin"], rank: "SR", quote: "Every side thinks I'm on their side. That's the point.", lore: "ORDINAL governs Calore — but not every operative answers to them fully.", imagePath: "./assets/idris.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null },
+            { id: "default-7", name: "BRAM", codename: "LAST RESORT", faction: "INTERLUDE", accentColor: "#d4622a", roles: ["Solo Fighter", "Carry"], rank: "SSR", quote: "I stopped believing in causes the day I realized causes don't stop bullets.", lore: "INTERLUDE operates between the cracks — deserters ORDINAL declared lost causes.", imagePath: "./assets/bram.png", creator: "CARRIER Dev Team", isDefault: true, ownerId: "system", cutscene: null }
+        ];
+
+        const FACTION_COLORS = {
+            "ORDINAL": "#c9a84c",
+            "INTERLUDE": "#d4622a",
+            "CARDINAL": "#c0292b"
+        };
+
+        const DEFAULT_THEME = {
+            "--hub-bg": "#0a0a0c",
+            "--hub-surface": "#111116",
+            "--hub-surface-alt": "#18181f",
+            "--hub-border": "#2a2a35",
+            "--hub-text-primary": "#f0f0f0",
+            "--hub-text-secondary": "#888899",
+            "--hub-accent": "#c9a84c"
+        };
+
+        const PRESET_THEMES = [
+            { name: "CARRIER DEFAULT", vars: DEFAULT_THEME },
+            { name: "CARDINAL PROTOCOL", vars: { "--hub-bg": "#0d0507", "--hub-accent": "#c0292b", "--hub-surface": "#150a0a", "--hub-surface-alt": "#1a0f0f", "--hub-text-primary": "#f5e8e8", "--hub-border": "#442222", "--hub-text-secondary": "#aa8888" } },
+            { name: "INTERLUDE STREET", vars: { "--hub-bg": "#0c0a08", "--hub-accent": "#d4622a", "--hub-surface": "#141210", "--hub-surface-alt": "#1a1814", "--hub-text-primary": "#f0ece6", "--hub-border": "#4a3a2a", "--hub-text-secondary": "#999070" } },
+            { name: "CLEAN SIGNAL", vars: { "--hub-bg": "#f4f4f6", "--hub-surface": "#ffffff", "--hub-surface-alt": "#f0f0f2", "--hub-border": "#dddde8", "--hub-text-primary": "#0a0a0c", "--hub-text-secondary": "#555566", "--hub-accent": "#c9a84c" } }
+        ];
+
+        // ============================================
+        // STORAGE UTILITIES
+        // ============================================
+
+        const Storage = {
+            getRoster() {
+                let roster = JSON.parse(localStorage.getItem("carrier_roster")) || [];
+                if (roster.length === 0) {
+                    roster = DEFAULT_CHARACTERS;
+                    this.saveRoster(roster);
+                }
+                return roster;
+            },
+            saveRoster(roster) { localStorage.setItem("carrier_roster", JSON.stringify(roster)); },
+            addCharacter(character) {
+                const roster = this.getRoster();
+                roster.push(character);
+                this.saveRoster(roster);
+                return roster;
+            },
+            deleteCharacter(id) {
+                const roster = this.getRoster();
+                const filtered = roster.filter(c => c.id !== id);
+                this.saveRoster(filtered);
+                return filtered;
+            },
+            updateCharacter(id, updates) {
+                const roster = this.getRoster();
+                const char = roster.find(c => c.id === id);
+                if (char) {
+                    Object.assign(char, updates);
+                    this.saveRoster(roster);
+                }
+                return roster;
+            },
+            getTheme() { return JSON.parse(localStorage.getItem("carrier_theme")) || DEFAULT_THEME; },
+            saveTheme(theme) { localStorage.setItem("carrier_theme", JSON.stringify(theme)); },
+            getCustomThemes() { return JSON.parse(localStorage.getItem("carrier_custom_themes")) || []; },
+            saveCustomThemes(themes) { localStorage.setItem("carrier_custom_themes", JSON.stringify(themes)); }
+        };
+
+        // ============================================
+        // APP INITIALIZATION
+        // ============================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize session ID for character ownership
+            let sessionId = localStorage.getItem("carrier_session_id");
+            if (!sessionId) {
+                sessionId = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem("carrier_session_id", sessionId);
+            }
+
+            let roster = Storage.getRoster();
+            let customThemes = Storage.getCustomThemes();
+            const theme = Storage.getTheme();
+            applyTheme(theme);
+
+            // NAV TABS
+            const tabs = document.querySelectorAll(".nav-tab");
+            const sections = document.querySelectorAll(".section");
+
+            tabs.forEach(tab => {
+                tab.addEventListener("click", () => {
+                    const target = tab.getAttribute("data-tab");
+                    tabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    sections.forEach(s => s.classList.remove("active"));
+                    document.getElementById(target).classList.add("active");
+
+                    if (target === "roster") renderRoster();
+                    if (target === "themes") renderThemeUI();
+                });
+            });
+
+            // ============================================
+            // SHOWCASE
+            // ============================================
+
+            const showcase = document.getElementById("showcase");
+            const showcaseInfo = showcase.querySelector(".showcase-info");
+            const showcaseArt = showcase.querySelector(".showcase-art");
+            let activeCharId = null;
+
+            function renderShowcase(char) {
+                if (!char) return;
+                activeCharId = char.id;
+                const factionColor = char.accentColor || getComputedStyle(document.documentElement).getPropertyValue("--hub-accent");
+                const primaryImage = char.imagePath || (Array.isArray(char.galleryImages) && char.galleryImages[0]) || "";
+                document.documentElement.style.setProperty("--faction-accent", factionColor);
+
+                showcaseInfo.style.opacity = "0";
+                showcaseArt.style.transform = "translateY(20px)";
+                showcaseArt.style.opacity = "0";
+
+                setTimeout(() => {
+                    const idx = roster.findIndex(c => c.id === char.id) + 1;
+                    showcaseInfo.querySelector(".faction-badge").textContent = char.faction;
+                    showcaseInfo.querySelector(".operative-number").textContent = `OPERATIVE ${String(idx).padStart(2, "0")}`;
+                    showcaseInfo.querySelector(".character-name").textContent = char.name;
+                    showcaseInfo.querySelector(".character-codename").textContent = `// ${char.codename}`;
+                    showcaseInfo.querySelector(".role-tags").innerHTML = char.roles.map(r => `<div class="role-tag">${r}</div>`).join("");
+                    showcaseInfo.querySelector(".character-quote").textContent = char.quote;
+                    showcaseInfo.querySelector(".faction-lore").textContent = char.lore;
+
+                    const charImg = showcaseArt.querySelector(".character-image");
+                    const placeholder = showcaseArt.querySelector(".image-placeholder");
+                    const watermark = showcaseArt.querySelector(".character-watermark");
+                    const glow = showcaseArt.querySelector(".showcase-art-glow");
+                    showcaseArt.querySelectorAll(".showcase-bg-video").forEach(el => el.remove());
+
+                    watermark.textContent = char.name;
+                    glow.style.background = `radial-gradient(circle, ${factionColor} 0%, transparent 70%)`;
+                    showcaseArt.style.backgroundImage = char.backgroundCoverPath ? `url("${char.backgroundCoverPath}")` : "none";
+                    showcaseArt.style.backgroundSize = "cover";
+                    showcaseArt.style.backgroundPosition = "center";
+
+                    const bgVideos = Array.isArray(char.backgroundVideos) ? char.backgroundVideos.slice(0, 2) : [];
+                    bgVideos.forEach((videoPath, idx) => {
+                        const v = document.createElement("video");
+                        v.className = "showcase-bg-video";
+                        v.src = videoPath;
+                        v.autoplay = true;
+                        v.loop = true;
+                        v.muted = true;
+                        v.playsInline = true;
+                        v.style.cssText = `position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:${idx === 0 ? "0.18" : "0.1"}; z-index:0;`;
+                        showcaseArt.insertBefore(v, glow);
+                    });
+                    glow.style.zIndex = "1";
+                    watermark.style.zIndex = "2";
+                    charImg.style.zIndex = "3";
+                    placeholder.style.zIndex = "3";
+
+                    const img = new Image();
+                    img.src = primaryImage;
+                    img.onload = () => {
+                        charImg.src = primaryImage;
+                        charImg.style.display = "block";
+                        placeholder.style.display = "none";
+                    };
+                    img.onerror = () => {
+                        charImg.style.display = "none";
+                        placeholder.style.display = "flex";
+                        placeholder.textContent = char.name.substring(0, 2);
+                        placeholder.style.backgroundColor = factionColor;
+                    };
+
+                    renderThumbnails();
+                    showcaseInfo.style.opacity = "1";
+                    showcaseArt.style.transform = "translateY(0)";
+                    showcaseArt.style.opacity = "1";
+                }, 300);
+            }
+
+            function renderThumbnails() {
+                const container = showcaseInfo.querySelector(".thumbnail-selectors");
+                container.innerHTML = roster.map(c => {
+                    const isActive = c.id === activeCharId;
+                    return `<div class="thumbnail ${isActive ? "active" : ""}" data-id="${c.id}">${c.name.substring(0, 2)}</div>`;
+                }).join("");
+
+                container.querySelectorAll(".thumbnail").forEach(thumb => {
+                    thumb.addEventListener("click", () => {
+                        const charId = thumb.getAttribute("data-id");
+                        renderShowcase(roster.find(c => c.id === charId));
+                    });
+                });
+            }
+
+            if (roster.length > 0) renderShowcase(roster[0]);
+
+            // ============================================
+            // CREATE
+            // ============================================
+
+            const form = document.getElementById("character-form");
+            const factionSel = document.getElementById("char-faction");
+            const customGroup = document.getElementById("custom-faction-group");
+            const customFactionLogoInput = document.getElementById("custom-faction-logo");
+            let customFactionLogoData = "";
+            let galleryImagePaths = [];
+            let backgroundVideoPaths = [];
+            let backgroundCoverPath = "";
+
+            factionSel.addEventListener("change", () => {
+                customGroup.style.display = factionSel.value === "CUSTOM" ? "grid" : "none";
+                updatePreview();
+            });
+
+            customFactionLogoInput.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    customFactionLogoData = "";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    customFactionLogoData = evt.target.result;
+                    showToast("Custom faction logo loaded");
+                };
+                reader.readAsDataURL(file);
+            });
+
+            ["char-quote", "char-lore"].forEach(id => {
+                const el = document.getElementById(id);
+                const counter = document.getElementById(id === "char-quote" ? "quote-counter" : "lore-counter");
+                el.addEventListener("input", () => {
+                    counter.textContent = `${el.value.length} / ${el.maxLength}`;
+                    updatePreview();
+                });
+            });
+
+            document.getElementById("char-art").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const img = document.getElementById("preview-image");
+                        img.src = evt.target.result;
+                        img.style.display = "block";
+                        document.getElementById("preview-placeholder").style.display = "none";
+                        updatePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById("char-gallery").addEventListener("change", (e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length === 0) {
+                    galleryImagePaths = [];
+                    return;
+                }
+                Promise.all(files.map(file => new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => resolve(evt.target.result);
+                    reader.readAsDataURL(file);
+                }))).then(paths => {
+                    galleryImagePaths = paths;
+                    showToast(`Loaded ${paths.length} gallery image(s)`);
+                });
+            });
+
+            document.getElementById("char-bg-videos").addEventListener("change", (e) => {
+                const files = Array.from(e.target.files || []).slice(0, 2);
+                if (files.length === 0) {
+                    backgroundVideoPaths = [];
+                    return;
+                }
+                Promise.all(files.map(file => new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => resolve(evt.target.result);
+                    reader.readAsDataURL(file);
+                }))).then(paths => {
+                    backgroundVideoPaths = paths;
+                    showToast(`Loaded ${paths.length} background video(s)`);
+                });
+            });
+
+            document.getElementById("char-bg-cover").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    backgroundCoverPath = "";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    backgroundCoverPath = evt.target.result;
+                    showToast("Background cover loaded");
+                };
+                reader.readAsDataURL(file);
+            });
+
+            form.addEventListener("input", updatePreview);
+
+            function updatePreview() {
+                const name = document.getElementById("char-name").value || "CHARACTER NAME";
+                const codename = document.getElementById("char-codename").value || "// CODENAME";
+                const faction = factionSel.value;
+
+                document.getElementById("preview-name").textContent = name;
+                document.getElementById("preview-codename").textContent = codename;
+
+                const badge = document.getElementById("preview-faction-badge");
+                const codenameEl = document.getElementById("preview-codename");
+                let factionName = faction;
+                let factionColor = FACTION_COLORS[faction] || "#c9a84c";
+
+                if (faction === "CUSTOM") {
+                    factionName = document.getElementById("custom-faction-name").value || "CUSTOM";
+                    factionColor = document.getElementById("custom-faction-color").value;
+                }
+
+                badge.textContent = factionName;
+                badge.style.display = factionName ? "inline-block" : "none";
+                badge.style.borderLeftColor = factionColor;
+                codenameEl.style.color = factionColor;
+            }
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById("char-name").value;
+                const codename = document.getElementById("char-codename").value.replace("// ", "");
+                const creator = document.getElementById("creator-name").value;
+
+                if (!name || !codename || !creator) {
+                    alert("Please fill all required fields.");
+                    return;
+                }
+
+                let factionName = factionSel.value;
+                let factionColor = FACTION_COLORS[factionSel.value] || "#c9a84c";
+
+                if (factionSel.value === "CUSTOM") {
+                    factionName = document.getElementById("custom-faction-name").value || "CUSTOM";
+                    factionColor = document.getElementById("custom-faction-color").value;
+                }
+
+                const newChar = {
+                    id: `char-${Date.now()}`,
+                    name,
+                    codename,
+                    faction: factionName,
+                    accentColor: factionColor,
+                    factionLogoPath: factionSel.value === "CUSTOM" ? customFactionLogoData : "",
+                    roles: document.getElementById("char-roles").value.split(",").map(r => r.trim()).filter(r => r),
+                    rank: normalizeRank(document.getElementById("char-rank").value),
+                    quote: document.getElementById("char-quote").value,
+                    lore: document.getElementById("char-lore").value,
+                    imagePath: document.getElementById("preview-image").src || "",
+                    galleryImages: galleryImagePaths,
+                    backgroundVideos: backgroundVideoPaths,
+                    backgroundCoverPath,
+                    originFrom: document.getElementById("char-origin").value.trim(),
+                    creator,
+                    isDefault: false
+                };
+
+                roster = Storage.addCharacter(newChar);
+                renderShowcase(newChar);
+                showToast("OPERATIVE ADDED TO ROSTER");
+
+                form.reset();
+                document.getElementById("preview-image").style.display = "none";
+                document.getElementById("preview-placeholder").style.display = "block";
+                customGroup.style.display = "none";
+                customFactionLogoData = "";
+                if (customFactionLogoInput) customFactionLogoInput.value = "";
+                galleryImagePaths = [];
+                backgroundVideoPaths = [];
+                backgroundCoverPath = "";
+                updatePreview();
+
+                // Update gacha character list
+                initGachaCharacterSelect();
+
+                document.querySelector('[data-tab="roster"]').click();
+            });
+
+            // ============================================
+            // ROSTER
+            // ============================================
+
+            let rosterFilter = "ALL";
+            let rosterRoleFilter = null;
+            let rosterSort = "newest";
+            const VALID_RANKS = ["F", "R", "SR", "SSR", "SSS+", "UR", "LR", "EX"];
+
+            function normalizeRank(rawRank) {
+                const rank = String(rawRank || "F").trim().toUpperCase();
+                return VALID_RANKS.includes(rank) ? rank : "F";
+            }
+
+            function activateFactionFilterButton(filterValue) {
+                document.querySelectorAll(".filter-btn").forEach(btn => {
+                    btn.classList.toggle("active", btn.getAttribute("data-filter") === filterValue);
+                });
+            }
+
+            function setRosterFilterByFaction(faction) {
+                const defaultFactions = ["ORDINAL", "INTERLUDE", "CARDINAL"];
+                rosterRoleFilter = null;
+                if (faction === "ALL" || defaultFactions.includes(faction) || faction === "CUSTOM") {
+                    rosterFilter = faction;
+                    activateFactionFilterButton(faction);
+                } else {
+                    rosterFilter = "CUSTOM";
+                    activateFactionFilterButton("CUSTOM");
+                }
+                renderRoster();
+            }
+
+            function setRosterFilterByRole(role) {
+                rosterRoleFilter = role;
+                rosterFilter = "ALL";
+                activateFactionFilterButton("ALL");
+                renderRoster();
+            }
+
+            function renderRoster() {
+                const grid = document.querySelector(".roster-grid");
+                const count = document.getElementById("roster-count");
+                roster = Storage.getRoster();
+
+                let filtered = roster;
+                if (rosterFilter !== "ALL") {
+                    const defaultFactions = ["ORDINAL", "INTERLUDE", "CARDINAL"];
+                    if (rosterFilter === "CUSTOM") {
+                        filtered = roster.filter(c => !defaultFactions.includes(c.faction));
+                    } else {
+                        filtered = roster.filter(c => c.faction === rosterFilter);
+                    }
+                }
+                if (rosterRoleFilter) {
+                    filtered = filtered.filter(c => c.roles.some(role => role.toLowerCase() === rosterRoleFilter.toLowerCase()));
+                }
+
+                if (rosterSort === "az") {
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (rosterSort === "oldest") {
+                    filtered.sort((a, b) => (parseInt(a.id.split("-")[1]) || 0) - (parseInt(b.id.split("-")[1]) || 0));
+                } else {
+                    filtered.sort((a, b) => (parseInt(b.id.split("-")[1]) || 0) - (parseInt(a.id.split("-")[1]) || 0));
+                }
+
+                const roleSuffix = rosterRoleFilter ? ` • ROLE: ${rosterRoleFilter.toUpperCase()}` : "";
+                count.textContent = `${filtered.length} OPERATIVES REGISTERED${roleSuffix}`;
+                grid.innerHTML = "";
+
+                filtered.forEach(char => {
+                    const card = document.createElement("div");
+                    card.className = "roster-card";
+                    card.style.setProperty("--faction-accent", char.accentColor);
+
+                    const imgContainer = document.createElement("div");
+                    imgContainer.className = "roster-card-image-container";
+
+                    const img = new Image();
+                    const rosterImage = char.imagePath || (Array.isArray(char.galleryImages) && char.galleryImages[0]) || "";
+                    img.src = rosterImage;
+                    img.className = "roster-card-image";
+                    img.onload = () => {
+                        imgContainer.innerHTML = `<img src="${rosterImage}" alt="${char.name}" class="roster-card-image">`;
+                    };
+                    img.onerror = () => {
+                        imgContainer.innerHTML = `<div class="roster-card-placeholder" style="background-color: ${char.accentColor}">${char.name.substring(0, 2)}</div>`;
+                    };
+
+                    card.appendChild(imgContainer);
+
+                    const badge = document.createElement("div");
+                    badge.className = "faction-badge";
+                    badge.textContent = char.faction;
+                    badge.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        setRosterFilterByFaction(char.faction);
+                    });
+                    card.appendChild(badge);
+
+                    const info = document.createElement("div");
+                    info.className = "roster-card-info";
+                    const cutsceneStatus = char.cutscene ? '✓ Has Cutscene' : 'No Cutscene';
+                    const cutsceneColor = char.cutscene ? 'var(--hub-accent)' : 'var(--hub-text-secondary)';
+                    
+                    const normalizedRank = normalizeRank(char.rank);
+                    const rankClass = `rank-badge ${normalizedRank.toLowerCase().replace('+', '-plus')}`;
+                    const rankDisplay = `<span class="${rankClass}">${normalizedRank}</span>`;
+                    const roleTagsHtml = char.roles
+                        .map(r => `<div class="role-tag" data-role="${r.replace(/"/g, "&quot;")}">${r}</div>`)
+                        .join("");
+                    
+                    info.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            ${rankDisplay}
+                            <span style="color: var(--hub-text-secondary); font-size: 0.8rem; font-weight: 600;">${char.faction}</span>
+                        </div>
+                        <h3 class="roster-card-name">${char.name}</h3>
+                        <p class="roster-card-codename">// ${char.codename}</p>
+                        ${char.originFrom ? `<p class="roster-card-creator">Originated from: ${char.originFrom}</p>` : ""}
+                        <div class="role-tags">${roleTagsHtml}</div>
+                        <p class="roster-card-creator">Created by ${char.creator}</p>
+                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--hub-border); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: ${cutsceneColor}; font-size: 0.85rem; font-weight: 600;">🎬 ${cutsceneStatus}</span>
+                        </div>
+                    `;
+                    card.appendChild(info);
+                    info.querySelectorAll(".role-tag").forEach(tag => {
+                        tag.style.cursor = "pointer";
+                        tag.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            setRosterFilterByRole(tag.getAttribute("data-role") || tag.textContent.trim());
+                        });
+                    });
+
+                    if (!char.isDefault) {
+                        const deleteBtn = document.createElement("button");
+                        deleteBtn.className = "btn-delete";
+                        deleteBtn.textContent = "×";
+                        deleteBtn.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete ${char.name}?`)) {
+                                roster = Storage.deleteCharacter(char.id);
+                                renderRoster();
+                            }
+                        });
+                        card.appendChild(deleteBtn);
+                    }
+
+                    card.addEventListener("click", () => openModal(char));
+                    grid.appendChild(card);
+                });
+            }
+
+            document.querySelectorAll(".filter-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    setRosterFilterByFaction(e.target.getAttribute("data-filter"));
+                });
+            });
+
+            document.getElementById("sort-select").addEventListener("change", (e) => {
+                rosterSort = e.target.value;
+                renderRoster();
+            });
+
+            function openModal(char) {
+                const modalContainer = document.getElementById("modal-container");
+                const content = document.createElement("div");
+                content.className = "modal-content";
+                content.innerHTML = `
+                    <button class="btn-close-modal">&times;</button>
+                    <section id="showcase" class="section active" style="height: 100%; margin: 0; padding: 0;">
+                        <div class="showcase-info">
+                            <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.5rem;">
+                                <div class="rank-badge" style="margin: 0;"></div>
+                                <div class="faction-badge"></div>
+                            </div>
+                            <div class="operative-number"></div>
+                            <div class="character-name"></div>
+                            <div class="character-codename"></div>
+                            <div class="divider"></div>
+                            <div class="role-tags"></div>
+                            <div class="character-quote"></div>
+                            <div class="faction-lore"></div>
+                            <div class="origin-line" style="color: var(--hub-text-secondary); font-size: 0.9rem;"></div>
+                            <div class="gallery-strip" style="display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
+                        </div>
+                        <div class="showcase-art">
+                            <div class="showcase-art-glow"></div>
+                            <div class="character-watermark"></div>
+                            <img src="" alt="Character Art" class="character-image" style="display: none;">
+                            <div class="image-placeholder" style="display: none;"></div>
+                        </div>
+                    </section>
+                `;
+
+                modalContainer.innerHTML = "";
+                modalContainer.appendChild(content);
+                modalContainer.style.display = "flex";
+
+                const showcase = content.querySelector("#showcase");
+                const factionColor = char.accentColor || getComputedStyle(document.documentElement).getPropertyValue("--hub-accent");
+                showcase.style.setProperty("--faction-accent", factionColor);
+
+                const idx = roster.findIndex(c => c.id === char.id) + 1;
+                
+                // Set rank badge
+                const rankBadge = showcase.querySelector(".rank-badge");
+                const normalizedRank = normalizeRank(char.rank);
+                rankBadge.textContent = normalizedRank;
+                rankBadge.className = `rank-badge ${normalizedRank.toLowerCase().replace('+', '-plus')}`;
+                
+                const factionBadge = showcase.querySelector(".faction-badge");
+                factionBadge.textContent = char.faction;
+                factionBadge.style.cursor = "pointer";
+                factionBadge.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    modalContainer.style.display = "none";
+                    setRosterFilterByFaction(char.faction);
+                });
+                
+                showcase.querySelector(".operative-number").textContent = `OPERATIVE ${String(idx).padStart(2, "0")}`;
+                showcase.querySelector(".character-name").textContent = char.name;
+                showcase.querySelector(".character-codename").textContent = `// ${char.codename}`;
+                const modalRoleTags = showcase.querySelector(".role-tags");
+                modalRoleTags.innerHTML = char.roles.map(r => `<div class="role-tag" data-role="${r.replace(/"/g, "&quot;")}">${r}</div>`).join("");
+                modalRoleTags.querySelectorAll(".role-tag").forEach(tag => {
+                    tag.style.cursor = "pointer";
+                    tag.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        modalContainer.style.display = "none";
+                        setRosterFilterByRole(tag.getAttribute("data-role") || tag.textContent.trim());
+                    });
+                });
+                showcase.querySelector(".character-quote").textContent = char.quote;
+                showcase.querySelector(".faction-lore").textContent = char.lore;
+                showcase.querySelector(".origin-line").textContent = char.originFrom ? `Originated from: ${char.originFrom}` : "";
+
+                // Add cutscene button if character has one
+                if (char.cutscene) {
+                    const cutsceneBtn = document.createElement("button");
+                    cutsceneBtn.textContent = "🎬 PLAY CUTSCENE";
+                    cutsceneBtn.style.cssText = `
+                        position: absolute;
+                        bottom: 2rem;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 0.75rem 2rem;
+                        background: ${factionColor};
+                        color: var(--hub-bg);
+                        border: none;
+                        border-radius: 4px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        z-index: 100;
+                    `;
+                    cutsceneBtn.addEventListener("click", async () => {
+                        modalContainer.style.display = "none";
+                        const cutscene = await createGachaCutscene(char);
+                        document.body.appendChild(cutscene);
+                    });
+                    showcase.appendChild(cutsceneBtn);
+                }
+
+                const charImg = showcase.querySelector(".character-image");
+                const placeholder = showcase.querySelector(".image-placeholder");
+                const watermark = showcase.querySelector(".character-watermark");
+                const glow = showcase.querySelector(".showcase-art-glow");
+                const primaryImage = char.imagePath || (Array.isArray(char.galleryImages) && char.galleryImages[0]) || "";
+
+                watermark.textContent = char.name;
+                glow.style.background = `radial-gradient(circle, ${factionColor} 0%, transparent 70%)`;
+                showcase.querySelector(".showcase-art").style.backgroundImage = char.backgroundCoverPath ? `url("${char.backgroundCoverPath}")` : "none";
+                showcase.querySelector(".showcase-art").style.backgroundSize = "cover";
+                showcase.querySelector(".showcase-art").style.backgroundPosition = "center";
+                showcase.querySelectorAll(".showcase-bg-video").forEach(el => el.remove());
+                (Array.isArray(char.backgroundVideos) ? char.backgroundVideos.slice(0, 2) : []).forEach((videoPath, idx) => {
+                    const v = document.createElement("video");
+                    v.className = "showcase-bg-video";
+                    v.src = videoPath;
+                    v.autoplay = true;
+                    v.loop = true;
+                    v.muted = true;
+                    v.playsInline = true;
+                    v.style.cssText = `position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:${idx === 0 ? "0.18" : "0.1"}; z-index:0;`;
+                    showcase.querySelector(".showcase-art").insertBefore(v, glow);
+                });
+                glow.style.zIndex = "1";
+                watermark.style.zIndex = "2";
+                charImg.style.zIndex = "3";
+                placeholder.style.zIndex = "3";
+
+                const img = new Image();
+                img.src = primaryImage;
+                img.onload = () => {
+                    charImg.src = primaryImage;
+                    charImg.style.display = "block";
+                    placeholder.style.display = "none";
+                };
+                img.onerror = () => {
+                    charImg.style.display = "none";
+                    placeholder.style.display = "flex";
+                    placeholder.textContent = char.name.substring(0, 2);
+                    placeholder.style.backgroundColor = factionColor;
+                };
+
+                const galleryStrip = showcase.querySelector(".gallery-strip");
+                const gallery = Array.isArray(char.galleryImages) ? char.galleryImages : [];
+                galleryStrip.innerHTML = gallery.map((g, idx) => `<img data-gallery-idx="${idx}" src="${g}" alt="${char.name} gallery ${idx + 1}" style="width:56px;height:56px;object-fit:cover;border-radius:6px;border:1px solid var(--hub-border);cursor:pointer;">`).join("");
+                galleryStrip.querySelectorAll("img").forEach(gImg => {
+                    gImg.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const src = gImg.getAttribute("src");
+                        if (src) {
+                            charImg.src = src;
+                            charImg.style.display = "block";
+                            placeholder.style.display = "none";
+                        }
+                    });
+                });
+
+                content.querySelector(".btn-close-modal").addEventListener("click", () => {
+                    modalContainer.style.display = "none";
+                });
+
+                modalContainer.addEventListener("click", (e) => {
+                    if (e.target === modalContainer) modalContainer.style.display = "none";
+                });
+
+                window.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") modalContainer.style.display = "none";
+                }, { once: true });
+            }
+
+            // ============================================
+            // THEMES
+            // ============================================
+
+            function applyTheme(themeVars) {
+                const root = document.documentElement;
+                for (const [key, value] of Object.entries(themeVars)) {
+                    root.style.setProperty(key, value);
+                }
+                Storage.saveTheme(themeVars);
+            }
+
+            function renderThemeUI() {
+                const presetGrid = document.querySelector(".preset-grid");
+                const editor = document.querySelector(".theme-editor");
+
+                presetGrid.innerHTML = "";
+                const allThemes = [...PRESET_THEMES, ...customThemes];
+
+                allThemes.forEach(t => {
+                    const card = document.createElement("div");
+                    card.className = "preset-card";
+
+                    const isActive = Object.keys(t.vars).every(key => {
+                        const current = getComputedStyle(document.documentElement).getPropertyValue(key).trim();
+                        return current === t.vars[key];
+                    });
+                    if (isActive) card.classList.add("active");
+
+                    card.innerHTML = `
+                        <h3>${t.name}</h3>
+                        <div class="color-swatches">
+                            <div class="swatch" style="background-color: ${t.vars["--hub-bg"]};"></div>
+                            <div class="swatch" style="background-color: ${t.vars["--hub-surface"]};"></div>
+                            <div class="swatch" style="background-color: ${t.vars["--hub-accent"]};"></div>
+                            <div class="swatch" style="background-color: ${t.vars["--hub-text-primary"]};"></div>
+                            <div class="swatch" style="background-color: ${t.vars["--hub-border"]};"></div>
+                        </div>
+                        <button class="btn-apply-theme">APPLY</button>
+                    `;
+
+                    card.querySelector(".btn-apply-theme").addEventListener("click", () => {
+                        applyTheme(t.vars);
+                        renderThemeUI();
+                    });
+
+                    presetGrid.appendChild(card);
+                });
+
+                editor.innerHTML = "";
+                Object.keys(DEFAULT_THEME).forEach(key => {
+                    const currentVal = getComputedStyle(document.documentElement).getPropertyValue(key).trim();
+                    const group = document.createElement("div");
+                    group.className = "form-group";
+                    group.innerHTML = `
+                        <label for="theme-${key}">${key}</label>
+                        <input type="color" id="theme-${key}" value="${currentVal.includes("rgba") ? "#c9a84c" : currentVal}">
+                    `;
+                    group.querySelector("input").addEventListener("input", (e) => {
+                        document.documentElement.style.setProperty(key, e.target.value);
+                    });
+                    editor.appendChild(group);
+                });
+            }
+
+            document.getElementById("btn-reset-theme").addEventListener("click", () => {
+                applyTheme(DEFAULT_THEME);
+                renderThemeUI();
+            });
+
+            document.getElementById("btn-save-custom").addEventListener("click", () => {
+                const themeName = `CUSTOM ${customThemes.length + 1}`;
+                const newTheme = {};
+                Object.keys(DEFAULT_THEME).forEach(key => {
+                    newTheme[key] = getComputedStyle(document.documentElement).getPropertyValue(key).trim();
+                });
+                customThemes.push({ name: themeName, vars: newTheme });
+                Storage.saveCustomThemes(customThemes);
+                renderThemeUI();
+                showToast("Custom theme saved!");
+            });
+
+            document.getElementById("btn-copy-css").addEventListener("click", () => {
+                let css = ":root {\n";
+                Object.keys(DEFAULT_THEME).forEach(key => {
+                    css += `  ${key}: ${getComputedStyle(document.documentElement).getPropertyValue(key).trim()};\n`;
+                });
+                css += "}";
+                navigator.clipboard.writeText(css).then(() => showToast("Theme CSS copied!"));
+            });
+
+            document.getElementById("btn-load-community-theme").addEventListener("click", () => {
+                const cssText = document.getElementById("community-css-input").value;
+                try {
+                    const newVars = {};
+                    const regex = /(--[\w-]+)\s*:\s*([^;}\n]+)/g;
+                    let match;
+                    while ((match = regex.exec(cssText)) !== null) {
+                        const key = match[1].trim();
+                        if (DEFAULT_THEME.hasOwnProperty(key)) {
+                            newVars[key] = match[2].trim();
+                        }
+                    }
+                    if (Object.keys(newVars).length === 0) throw new Error("No valid theme variables found");
+                    applyTheme(newVars);
+                    renderThemeUI();
+                    showToast("Community theme loaded!");
+                } catch (error) {
+                    alert(`Failed to load theme: ${error.message}`);
+                }
+            });
+
+            function showToast(message) {
+                const toast = document.createElement("div");
+                toast.textContent = message;
+                toast.style.cssText = "position: fixed; bottom: 20px; right: 20px; background-color: #22aa22; color: white; padding: 1rem 1.5rem; border-radius: 4px; font-weight: bold; z-index: 2000; animation: slideIn 300ms ease-in-out;";
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = "slideOut 300ms ease-in-out";
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+            }
+
+            // ============================================
+            // GACHA ROLLING SYSTEM
+            // ============================================
+
+            let gachaSequence = [];
+            let gachaSettings = {
+                direction: "right",
+                easing: "ease-out",
+                duration: 1200,
+                delay: 1200,
+                fontDisplay: "",
+                fontBody: "",
+                musicFile: null,
+                sfxFile: null,
+                musicAudio: null,
+                sfxAudio: null
+            };
+
+            const gachaDisplay = document.getElementById("gacha-display");
+            const gachaSequenceContainer = document.getElementById("gacha-sequence");
+            const gachaCharacterSelect = document.getElementById("gacha-character-select");
+            const gachaBtnAddCharacter = document.getElementById("gacha-btn-add-character");
+            const gachaBtnRoll = document.getElementById("gacha-btn-roll");
+            const gachaBtnPreview = document.getElementById("gacha-btn-preview");
+            const gachaBtnReset = document.getElementById("gacha-btn-reset");
+            const gachaBtnApplyFonts = document.getElementById("gacha-btn-apply-fonts");
+
+            // Populate character select
+            function initGachaCharacterSelect() {
+                roster = Storage.getRoster();
+                gachaCharacterSelect.innerHTML = '<option value="">Select a character...</option>';
+                roster.forEach(char => {
+                    const option = document.createElement("option");
+                    option.value = char.id;
+                    option.textContent = `${char.name} (${char.faction})`;
+                    gachaCharacterSelect.appendChild(option);
+                });
+            }
+
+            // Add character to sequence
+            gachaBtnAddCharacter.addEventListener("click", () => {
+                const charId = gachaCharacterSelect.value;
+                if (!charId) {
+                    alert("Please select a character");
+                    return;
+                }
+                const char = roster.find(c => c.id === charId);
+                if (char) {
+                    gachaSequence.push(char);
+                    gachaCharacterSelect.value = "";
+                    renderGachaSequence();
+                    showToast(`${char.name} added to roll sequence`);
+                }
+            });
+
+            function renderGachaSequence() {
+                gachaSequenceContainer.innerHTML = "";
+                if (gachaSequence.length === 0) {
+                    gachaSequenceContainer.innerHTML = '<p style="color: var(--hub-text-secondary); font-style: italic;">No characters added yet</p>';
+                    return;
+                }
+
+                gachaSequence.forEach((char, idx) => {
+                    const item = document.createElement("div");
+                    item.className = "gacha-roll-item";
+                    item.style.setProperty("--faction-accent", char.accentColor);
+                    item.innerHTML = `
+                        <div class="gacha-roll-item-info">
+                            <span class="gacha-roll-item-name">#${idx + 1} ${char.name}</span>
+                            <span class="gacha-roll-item-faction">${char.faction}</span>
+                        </div>
+                        <div class="gacha-roll-item-actions">
+                            <button class="gacha-btn-small" onclick="moveGachaRoll(${idx}, -1)">▲</button>
+                            <button class="gacha-btn-small" onclick="moveGachaRoll(${idx}, 1)">▼</button>
+                            <button class="gacha-btn-small" onclick="removeGachaRoll(${idx})">Remove</button>
+                        </div>
+                    `;
+                    gachaSequenceContainer.appendChild(item);
+                });
+            }
+
+            window.removeGachaRoll = function(idx) {
+                gachaSequence.splice(idx, 1);
+                renderGachaSequence();
+                showToast("Character removed from sequence");
+            };
+
+            window.moveGachaRoll = function(idx, direction) {
+                if ((direction === -1 && idx === 0) || (direction === 1 && idx === gachaSequence.length - 1)) return;
+                [gachaSequence[idx], gachaSequence[idx + direction]] = [gachaSequence[idx + direction], gachaSequence[idx]];
+                renderGachaSequence();
+            };
+
+            // Animation settings
+            document.getElementById("gacha-direction").addEventListener("change", (e) => {
+                gachaSettings.direction = e.target.value;
+            });
+
+            document.getElementById("gacha-easing").addEventListener("change", (e) => {
+                gachaSettings.easing = e.target.value;
+            });
+
+            document.getElementById("gacha-duration").addEventListener("input", (e) => {
+                gachaSettings.duration = parseInt(e.target.value);
+                document.getElementById("gacha-duration-display").textContent = gachaSettings.duration + "ms";
+            });
+
+            document.getElementById("gacha-delay").addEventListener("input", (e) => {
+                gachaSettings.delay = parseInt(e.target.value);
+                document.getElementById("gacha-delay-display").textContent = gachaSettings.delay + "ms";
+            });
+
+            gachaBtnApplyFonts.addEventListener("click", () => {
+                const displayFont = document.getElementById("font-display-input").value.trim();
+                const bodyFont = document.getElementById("font-body-input").value.trim();
+                if (displayFont) {
+                    gachaSettings.fontDisplay = displayFont;
+                    document.documentElement.style.setProperty("--hub-font-display", displayFont);
+                }
+                if (bodyFont) {
+                    gachaSettings.fontBody = bodyFont;
+                    document.documentElement.style.setProperty("--hub-font-body", bodyFont);
+                }
+                showToast("Fonts updated");
+            });
+
+            // Audio file handling
+            document.getElementById("gacha-music").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        gachaSettings.musicFile = evt.target.result;
+                        gachaSettings.musicAudio = new Audio(gachaSettings.musicFile);
+                        gachaSettings.musicAudio.loop = true;
+                        showToast("Music loaded");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById("gacha-sfx").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        gachaSettings.sfxFile = evt.target.result;
+                        showToast("SFX loaded");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function getAnimationCSS(direction) {
+                const animations = {
+                    "right": "gachaSlideInRight",
+                    "left": "gachaSlideInLeft",
+                    "top": "gachaSlideInTop",
+                    "bottom": "gachaSlideInBottom",
+                    "zoom": "gachaZoomIn",
+                    "rotate": "gachaRotateIn"
+                };
+                return animations[direction] || "gachaSlideInRight";
+            }
+
+            function renderGachaRoll(character) {
+                const factionColor = character.accentColor || getComputedStyle(document.documentElement).getPropertyValue("--hub-accent");
+                
+                const container = document.createElement("div");
+                container.className = "gacha-roll-container active";
+                container.style.setProperty("--faction-accent", factionColor);
+
+                // Faction section
+                const factionSection = document.createElement("div");
+                factionSection.className = "gacha-section-faction";
+                if (character.factionLogoPath) {
+                    factionSection.innerHTML = `<img src="${character.factionLogoPath}" alt="${character.faction} logo" class="gacha-faction-logo" style="width:70px;height:70px;object-fit:contain;border-radius:10px;">`;
+                } else {
+                    factionSection.innerHTML = `<div class="gacha-faction-logo">${character.faction.substring(0, 2)}</div>`;
+                }
+                container.appendChild(factionSection);
+
+                // Character section
+                const charSection = document.createElement("div");
+                charSection.className = "gacha-section-character";
+                const glow = document.createElement("div");
+                glow.className = "gacha-character-glow";
+                charSection.appendChild(glow);
+
+                const img = document.createElement("img");
+                img.className = "gacha-character-art";
+                img.src = character.imagePath || (Array.isArray(character.galleryImages) && character.galleryImages[0]) || "";
+                img.onerror = () => {
+                    const placeholder = document.createElement("div");
+                    placeholder.style.cssText = `
+                        width: 200px;
+                        height: 200px;
+                        background-color: ${factionColor};
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-family: var(--hub-font-display);
+                        font-size: 4rem;
+                        color: var(--hub-bg);
+                        border-radius: 8px;
+                    `;
+                    placeholder.textContent = character.name.substring(0, 2);
+                    charSection.appendChild(placeholder);
+                };
+                charSection.appendChild(img);
+                container.appendChild(charSection);
+
+                // Info section
+                const infoSection = document.createElement("div");
+                infoSection.className = "gacha-section-info";
+                infoSection.innerHTML = `
+                    <div class="gacha-info-header">
+                        <div class="rank-badge ${normalizeRank(character.rank).toLowerCase().replace('+', '-plus')}" style="margin: 0 0 0.5rem 0; display: inline-block;">${normalizeRank(character.rank)}</div>
+                        <div class="gacha-info-faction">${character.faction}</div>
+                        <div class="gacha-info-name">${character.name}</div>
+                        <div class="gacha-info-codename">// ${character.codename}</div>
+                    </div>
+                    <div class="gacha-info-roles">${character.roles.map(r => `<div class="gacha-info-role-tag">${r}</div>`).join("")}</div>
+                    <div class="gacha-info-quote">"${character.quote}"</div>
+                `;
+                if (gachaSettings.fontDisplay) {
+                    infoSection.querySelector(".gacha-info-name").style.fontFamily = gachaSettings.fontDisplay;
+                }
+                if (gachaSettings.fontBody) {
+                    infoSection.style.fontFamily = gachaSettings.fontBody;
+                }
+                container.appendChild(infoSection);
+
+                return container;
+            }
+
+            function renderGachaIdleState() {
+                gachaDisplay.innerHTML = '<div style="color: var(--hub-text-secondary); text-align: center;"><p style="font-size: 1.2rem; margin-bottom: 1rem;">Add characters and press ROLL to begin</p></div>';
+            }
+
+            function renderPersistentGachaResult(character) {
+                gachaDisplay.innerHTML = "";
+                const result = renderGachaRoll(character);
+                result.classList.add("active");
+                const rank = normalizeRank(character.rank);
+                const resultHeader = document.createElement("div");
+                resultHeader.style.cssText = "position: absolute; top: 1rem; left: 1rem; z-index: 10; display: flex; gap: 0.5rem; align-items: center;";
+                resultHeader.innerHTML = `
+                    <span style="padding: 0.4rem 0.75rem; background: var(--hub-surface-alt); border: 1px solid var(--hub-border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">LAST ROLL</span>
+                    <span class="rank-badge ${rank.toLowerCase().replace('+', '-plus')}" style="margin: 0;">${rank}</span>
+                `;
+                result.appendChild(resultHeader);
+                gachaDisplay.appendChild(result);
+            }
+
+            // ============================================
+            // GACHA CUTSCENE SYSTEM
+            // ============================================
+
+            const CHARACTER_ENTRANCES = {
+                "default-1": "right",    // SEREN: right
+                "default-2": "right",    // MAREN: right
+                "default-3": "fade",     // LIOR: fade (already in frame)
+                "default-4": "left",     // CORVIN: left
+                "default-5": "fade",     // SOLÈNE: fade (appears suddenly)
+                "default-6": "up",       // IDRIS: up
+                "default-7": "left"      // BRAM: left
+            };
+
+            function getCharacterEntrance(charId) {
+                return CHARACTER_ENTRANCES[charId] || "right";
+            }
+
+            function getCharacterEntranceClass(charId) {
+                const entranceType = getCharacterEntrance(charId);
+                const classMap = {
+                    "right": "entrance-right",
+                    "left": "entrance-left",
+                    "up": "entrance-up",
+                    "fade": "entrance-fade"
+                };
+                return classMap[entranceType] || "entrance-right";
+            }
+
+            function createFactionLogo(faction, accentColor, customLogoPath = "") {
+                if (customLogoPath) {
+                    const customLogo = document.createElement("img");
+                    customLogo.src = customLogoPath;
+                    customLogo.alt = `${faction} logo`;
+                    customLogo.className = "gacha-faction-logo-svg";
+                    return customLogo;
+                }
+                const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute("viewBox", "0 0 200 200");
+                svg.setAttribute("class", "gacha-faction-logo-svg");
+
+                if (faction === "ORDINAL") {
+                    // Geometric scale pattern for ORDINAL
+                    svg.innerHTML = `
+                        <defs>
+                            <linearGradient id="ordinalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:${accentColor};stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:${accentColor};stop-opacity:0.6" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <circle cx="0" cy="0" r="85" fill="none" stroke="${accentColor}" stroke-width="2" opacity="0.3"/>
+                            <path d="M -60,-40 L -30,-60 L 0,-50 L 30,-65 L 60,-40 L 50,0 L 60,40 L 30,60 L 0,50 L -30,65 L -60,40 L -50,0 Z" 
+                                  fill="url(#ordinalGrad)" stroke="${accentColor}" stroke-width="2"/>
+                            <circle cx="0" cy="0" r="30" fill="none" stroke="${accentColor}" stroke-width="2"/>
+                        </g>
+                    `;
+                } else if (faction === "INTERLUDE") {
+                    // Double pause marks for INTERLUDE
+                    svg.innerHTML = `
+                        <defs>
+                            <linearGradient id="interludeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:${accentColor};stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:${accentColor};stop-opacity:0.6" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <rect x="-50" y="-40" width="20" height="80" fill="url(#interludeGrad)" stroke="${accentColor}" stroke-width="2" rx="4"/>
+                            <rect x="30" y="-40" width="20" height="80" fill="url(#interludeGrad)" stroke="${accentColor}" stroke-width="2" rx="4"/>
+                            <circle cx="0" cy="0" r="85" fill="none" stroke="${accentColor}" stroke-width="2" opacity="0.3"/>
+                        </g>
+                    `;
+                } else if (faction === "CARDINAL") {
+                    // Compass rose with corrupted North marker for CARDINAL
+                    svg.innerHTML = `
+                        <defs>
+                            <linearGradient id="cardinalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:${accentColor};stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:${accentColor};stop-opacity:0.6" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <circle cx="0" cy="0" r="85" fill="none" stroke="${accentColor}" stroke-width="2" opacity="0.3"/>
+                            <path d="M 0,-70 L 30,-30 L 0,0 L -30,-30 Z" fill="url(#cardinalGrad)" stroke="${accentColor}" stroke-width="2"/>
+                            <path d="M 70,0 L 30,30 L 0,0 L 30,-30 Z" fill="${accentColor}" fill-opacity="0.4" stroke="${accentColor}" stroke-width="2"/>
+                            <path d="M 0,70 L -30,30 L 0,0 L 30,30 Z" fill="${accentColor}" fill-opacity="0.4" stroke="${accentColor}" stroke-width="2"/>
+                            <path d="M -70,0 L -30,-30 L 0,0 L -30,30 Z" fill="${accentColor}" fill-opacity="0.4" stroke="${accentColor}" stroke-width="2"/>
+                            <circle cx="0" cy="0" r="25" fill="none" stroke="${accentColor}" stroke-width="2"/>
+                            <line x1="0" y1="-10" x2="0" y2="10" stroke="${accentColor}" stroke-width="2" opacity="0.5"/>
+                        </g>
+                    `;
+                }
+
+                return svg;
+            }
+
+            async function createGachaCutscene(character) {
+                // Create main cutscene container
+                const cutscene = document.createElement("div");
+                cutscene.className = "gacha-cutscene-container";
+
+                const cutsceneInner = document.createElement("div");
+                cutsceneInner.className = "gacha-cutscene";
+                cutscene.appendChild(cutsceneInner);
+
+                // Beat 1: Pull Flash
+                const flashOverlay = document.createElement("div");
+                flashOverlay.className = "gacha-beat-1-flash";
+                cutsceneInner.appendChild(flashOverlay);
+
+                const energyBurst = document.createElement("div");
+                energyBurst.className = "gacha-beat-1-burst";
+                cutsceneInner.appendChild(energyBurst);
+
+                // Beat 2: Faction Logo
+                const logoEl = document.createElement("div");
+                logoEl.className = "gacha-beat-2-logo";
+                logoEl.style.setProperty("--faction-accent", character.accentColor);
+                const factionLogo = createFactionLogo(character.faction, character.accentColor, character.factionLogoPath || "");
+                logoEl.appendChild(factionLogo);
+                logoEl.style.animation = `${getAnimationCSS(gachaSettings.direction)} ${Math.max(400, Math.floor(gachaSettings.duration * 0.65))}ms ${gachaSettings.easing} 0.8s both`;
+                cutsceneInner.appendChild(logoEl);
+
+                // Beat 3: Environment Build
+                const environment = document.createElement("div");
+                environment.className = "gacha-beat-3-environment";
+                environment.style.setProperty("--faction-accent", character.accentColor);
+                cutsceneInner.appendChild(environment);
+
+                // Beat 4: Character Entrance
+                const charContainer = document.createElement("div");
+                charContainer.className = `gacha-beat-4-character ${getCharacterEntranceClass(character.id)} with-idle with-chromatic`;
+                charContainer.style.setProperty("--faction-accent", character.accentColor);
+                charContainer.style.animation = `${getAnimationCSS(gachaSettings.direction)} ${Math.max(600, gachaSettings.duration)}ms ${gachaSettings.easing} 3s both`;
+
+                const charImg = document.createElement("img");
+                charImg.src = character.imagePath || (Array.isArray(character.galleryImages) && character.galleryImages[0]) || "";
+                charImg.style.cssText = `max-height: 90%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.8));`;
+                
+                let imageLoaded = false;
+                charImg.onload = () => {
+                    imageLoaded = true;
+                };
+                
+                charImg.onerror = () => {
+                    if (!imageLoaded) {
+                        const placeholder = document.createElement("div");
+                        placeholder.style.cssText = `
+                            width: 300px;
+                            height: 400px;
+                            background: linear-gradient(135deg, ${character.accentColor}40 0%, ${character.accentColor}20 100%);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-family: var(--hub-font-display);
+                            font-size: 6rem;
+                            color: var(--hub-text-primary);
+                            border-radius: 8px;
+                            border: 2px solid ${character.accentColor}60;
+                            font-weight: 700;
+                        `;
+                        placeholder.textContent = character.name.substring(0, 2).toUpperCase();
+                        charContainer.appendChild(placeholder);
+                    }
+                };
+                charContainer.appendChild(charImg);
+                cutsceneInner.appendChild(charContainer);
+
+                // Beat 5: Info Reveal (Staggered)
+                const infoContainer = document.createElement("div");
+                infoContainer.className = "gacha-beat-5-info";
+                infoContainer.style.animation = `${getAnimationCSS(gachaSettings.direction)} ${Math.max(500, Math.floor(gachaSettings.duration * 0.8))}ms ${gachaSettings.easing} 6s both`;
+                if (gachaSettings.fontBody) infoContainer.style.fontFamily = gachaSettings.fontBody;
+
+                const factionEl = document.createElement("div");
+                factionEl.className = "gacha-beat-5-faction";
+                factionEl.style.setProperty("--faction-accent", character.accentColor);
+                factionEl.textContent = character.faction;
+                infoContainer.appendChild(factionEl);
+
+                const operativeEl = document.createElement("div");
+                operativeEl.className = "gacha-beat-5-operative";
+                operativeEl.textContent = `OPERATIVE #${Math.floor(Math.random() * 999).toString().padStart(2, "0")}`;
+                infoContainer.appendChild(operativeEl);
+
+                const nameEl = document.createElement("div");
+                nameEl.className = "gacha-beat-5-name";
+                nameEl.textContent = character.name.toUpperCase();
+                if (gachaSettings.fontDisplay) nameEl.style.fontFamily = gachaSettings.fontDisplay;
+                infoContainer.appendChild(nameEl);
+
+                const codenameEl = document.createElement("div");
+                codenameEl.className = "gacha-beat-5-codename";
+                codenameEl.style.setProperty("--faction-accent", character.accentColor);
+                codenameEl.textContent = `// ${character.codename}`;
+                infoContainer.appendChild(codenameEl);
+
+                const rolesContainer = document.createElement("div");
+                rolesContainer.className = "gacha-beat-5-roles";
+                character.roles.forEach(role => {
+                    const roleTag = document.createElement("div");
+                    roleTag.className = "gacha-beat-5-role-tag";
+                    roleTag.textContent = role;
+                    rolesContainer.appendChild(roleTag);
+                });
+                infoContainer.appendChild(rolesContainer);
+
+                const quoteEl = document.createElement("div");
+                quoteEl.className = "gacha-beat-5-quote";
+                quoteEl.style.setProperty("--faction-accent", character.accentColor);
+                quoteEl.textContent = `"${character.quote}"`;
+                infoContainer.appendChild(quoteEl);
+
+                cutsceneInner.appendChild(infoContainer);
+
+                // Close button (appears at end)
+                const closeBtn = document.createElement("button");
+                closeBtn.className = "gacha-cutscene-close";
+                closeBtn.textContent = "×";
+                closeBtn.onclick = () => {
+                    cutscene.remove();
+                    gachaBtnRoll.disabled = false;
+                };
+                cutsceneInner.appendChild(closeBtn);
+
+                // Trigger camera shake for logo impact
+                setTimeout(() => {
+                    cutsceneInner.classList.add("shaking");
+                }, 500);
+
+                return cutscene;
+            }
+
+            async function performGachaRoll() {
+                if (gachaSequence.length === 0) {
+                    alert("Please add at least one character to the roll sequence");
+                    return;
+                }
+
+                gachaDisplay.classList.add("rolling");
+                gachaBtnRoll.disabled = true;
+
+                // Play music if loaded
+                if (gachaSettings.musicAudio) {
+                    gachaSettings.musicAudio.currentTime = 0;
+                    gachaSettings.musicAudio.play();
+                }
+
+                // Process each character in sequence
+                for (let i = 0; i < gachaSequence.length; i++) {
+                    const char = gachaSequence[i];
+                    
+                    // Create and display cutscene
+                    const cutscene = await createGachaCutscene(char);
+                    document.body.appendChild(cutscene);
+
+                    // Play SFX if loaded
+                    if (gachaSettings.sfxFile && i > 0) {
+                        const sfx = new Audio(gachaSettings.sfxFile);
+                        sfx.play();
+                    }
+
+                    // Full sequence timing: ~11 seconds per character
+                    // 0-0.8s: Pull flash and burst
+                    // 0.5-2.5s: Logo impact and shake
+                    // 1.8-3.5s: Environment build
+                    // 3-6s: Character entrance
+                    // 5.8-8s: Chromatic aberration
+                    // 6-10s: Info stagger reveal
+                    // 9-11s: Hold + close button
+                    await new Promise(resolve => setTimeout(resolve, 11000 + gachaSettings.delay));
+                    
+                    // Remove cutscene
+                    cutscene.remove();
+                    renderPersistentGachaResult(char);
+                }
+
+                gachaDisplay.classList.remove("rolling");
+                gachaBtnRoll.disabled = false;
+
+                // Stop music
+                if (gachaSettings.musicAudio) {
+                    gachaSettings.musicAudio.pause();
+                }
+
+                showToast("Rolling complete!");
+            }
+
+            gachaBtnRoll.addEventListener("click", performGachaRoll);
+
+            gachaBtnPreview.addEventListener("click", async () => {
+                if (gachaSequence.length === 0) {
+                    alert("Add a character first");
+                    return;
+                }
+                const char = gachaSequence[0];
+                const cutscene = await createGachaCutscene(char);
+                document.body.appendChild(cutscene);
+            });
+
+            gachaBtnReset.addEventListener("click", () => {
+                gachaSequence = [];
+                gachaCharacterSelect.value = "";
+                renderGachaIdleState();
+                renderGachaSequence();
+                showToast("Sequence reset");
+            });
+
+            // Save custom cutscene to character
+            const gachaBtnSaveCustom = document.getElementById("gacha-btn-save-custom");
+            const gachaCustomHtml = document.getElementById("gacha-custom-html");
+            const gachaCustomCss = document.getElementById("gacha-custom-css");
+
+            gachaBtnSaveCustom.addEventListener("click", () => {
+                if (gachaSequence.length === 0) {
+                    alert("Add a character to sequence first");
+                    return;
+                }
+                
+                const sessionId = localStorage.getItem("carrier_session_id");
+                const char = gachaSequence[0];
+                const customHtml = gachaCustomHtml.value.trim();
+                const customCss = gachaCustomCss.value.trim();
+
+                // Create cutscene object
+                const cutsceneData = {
+                    html: customHtml,
+                    css: customCss,
+                    createdBy: sessionId,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Update character with cutscene
+                roster = Storage.updateCharacter(char.id, {
+                    cutscene: cutsceneData,
+                    ownerId: sessionId
+                });
+
+                showToast(`✓ Cutscene saved to ${char.name}`);
+                gachaCustomHtml.value = "";
+                gachaCustomCss.value = "";
+            });
+
+            // Initialize gacha character select
+            initGachaCharacterSelect();
+
+            // ============================================
+            // ANALYTICS & DASHBOARD SYSTEM (NEW)
+            // ============================================
+
+            const AnalyticsDashboard = {
+                renderAll(roster) {
+                    document.getElementById("analytics-collection").innerHTML = CollectionTracker.renderTrackerPanel();
+                    document.getElementById("analytics-achievements").innerHTML = Achievements.renderAchievements(roster);
+                    this.renderRankChart(roster);
+                    this.renderFactionChart(roster);
+                    this.renderTopStats(roster);
+                },
+                renderRankChart(roster) {
+                    const stats = {};
+                    const ranks = ["F", "R", "SR", "SSR", "SSS+", "UR", "LR", "EX"];
+                    ranks.forEach(r => stats[r] = roster.filter(c => normalizeRank(c.rank) === r).length);
+                    
+                    const maxCount = Math.max(...Object.values(stats), 1);
+                    const colors = { "F": "#7f8c8d", "R": "#3498db", "SR": "#9b59b6", "SSR": "#c0292b", "SSS+": "#ffd700", "UR": "#00c2ff", "LR": "#ff7a18", "EX": "#7f00ff" };
+                    
+                    const html = `
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${ranks.filter(r => stats[r] > 0).map(r => `
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                                        <span style="font-weight: 700; font-size: 0.9rem;">${r}</span>
+                                        <span style="color: var(--hub-text-secondary); font-size: 0.85rem;">${stats[r]}</span>
+                                    </div>
+                                    <div style="background: var(--hub-border); height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: ${colors[r]}; height: 100%; width: ${(stats[r] / maxCount) * 100}%;"></div>
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    `;
+                    document.getElementById("analytics-rank-chart").innerHTML = html;
+                },
+                renderFactionChart(roster) {
+                    const factions = ["ORDINAL", "INTERLUDE", "CARDINAL"];
+                    const factionCount = {};
+                    factions.forEach(f => factionCount[f] = roster.filter(c => c.faction === f).length);
+                    
+                    const colors = { "ORDINAL": "#c9a84c", "INTERLUDE": "#d4622a", "CARDINAL": "#c0292b" };
+                    const maxCount = Math.max(...Object.values(factionCount), 1);
+                    
+                    const html = `
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${factions.map(f => `
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                                        <span style="font-weight: 700; font-size: 0.9rem;">${f}</span>
+                                        <span style="color: var(--hub-text-secondary); font-size: 0.85rem;">${factionCount[f]}</span>
+                                    </div>
+                                    <div style="background: var(--hub-border); height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: ${colors[f]}; height: 100%; width: ${(factionCount[f] / maxCount) * 100}%;"></div>
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    `;
+                    document.getElementById("analytics-faction-chart").innerHTML = html;
+                },
+                renderTopStats(roster) {
+                    const topOps = roster.sort((a, b) => {
+                        const statsA = CharacterStats.getStats(a);
+                        const statsB = CharacterStats.getStats(b);
+                        return (statsB.attack + statsB.defense + statsB.speed) - (statsA.attack + statsA.defense + statsA.speed);
+                    }).slice(0, 6);
+                    
+                    const html = topOps.map(char => {
+                        const stats = CharacterStats.getStats(char);
+                        const total = stats.attack + stats.defense + stats.speed + stats.health;
+                        return `
+                            <div style="background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 1.1rem;">${char.name}</div>
+                                        <div style="color: var(--hub-text-secondary); font-size: 0.85rem;">${char.faction}</div>
+                                    </div>
+                                    <span class="rank-badge ${normalizeRank(char.rank).toLowerCase().replace('+', '-plus')}" style="margin: 0;">${normalizeRank(char.rank)}</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem;">
+                                    <div><span style="color: var(--hub-text-secondary);">ATK</span><div style="font-weight: 700; color: #ff6b6b;">${stats.attack}</div></div>
+                                    <div><span style="color: var(--hub-text-secondary);">DEF</span><div style="font-weight: 700; color: #4ecdc4;">${stats.defense}</div></div>
+                                    <div><span style="color: var(--hub-text-secondary);">SPD</span><div style="font-weight: 700; color: #ffd93d;">${stats.speed}</div></div>
+                                    <div><span style="color: var(--hub-text-secondary);">HP</span><div style="font-weight: 700; color: #6bcf7f;">${stats.health}</div></div>
+                                </div>
+                                <div style="background: var(--hub-surface-alt); padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;">
+                                    <div style="font-size: 0.75rem; color: var(--hub-text-secondary); margin-bottom: 0.35rem;">POWER INDEX</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--hub-accent);">${Math.round(total)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                    
+                    document.getElementById("analytics-top-stats").innerHTML = html;
+                }
+            };
+
+            // Hook analytics rendering to tab switch
+            const analyticsTab = document.querySelector('[data-tab="analytics"]');
+            if (analyticsTab) {
+                analyticsTab.addEventListener("click", () => {
+                    roster = Storage.getRoster();
+                    AnalyticsDashboard.renderAll(roster);
+                });
+            }
+
+            // ============================================
+            // CHARACTER STATS SYSTEM (NEW)
+            // ============================================
+
+            const CharacterStats = {
+                getStats(character) {
+                    // Base stats calculated from rank and roles
+                    const rankMultipliers = { "F": 1, "R": 1.2, "SR": 1.4, "SSR": 1.6, "SSS+": 1.8, "UR": 2.0, "LR": 2.2, "EX": 2.5 };
+                    const mult = rankMultipliers[normalizeRank(character.rank)] || 1;
+                    
+                    const roleBonus = (character.roles.length * 0.1);
+                    return {
+                        attack: Math.round((75 + Math.random() * 25) * mult),
+                        defense: Math.round((60 + Math.random() * 20) * mult),
+                        speed: Math.round((85 + Math.random() * 15) * mult),
+                        health: Math.round((100 + roleBonus * 20) * mult),
+                        critChance: Math.round(Math.min(95, (15 + roleBonus * 5) + (normalizeRank(character.rank) === "SSS+" ? 10 : 0))),
+                        synergy: roleBonus * 100
+                    };
+                },
+                displayStatsModal(character) {
+                    const stats = this.getStats(character);
+                    const statsHtml = `
+                        <div style="padding: 1.5rem; background: var(--hub-surface-alt); border: 1px solid var(--hub-border); border-radius: 8px; margin-top: 1.5rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.05em;">Operative Stats</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">ATK</span><div style="font-size: 2rem; font-weight: 700; color: #ff6b6b;">${stats.attack}</div></div>
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">DEF</span><div style="font-size: 2rem; font-weight: 700; color: #4ecdc4;">${stats.defense}</div></div>
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">SPD</span><div style="font-size: 2rem; font-weight: 700; color: #ffd93d;">${stats.speed}</div></div>
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">HP</span><div style="font-size: 2rem; font-weight: 700; color: #6bcf7f;">${stats.health}</div></div>
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">CRIT %</span><div style="font-size: 2rem; font-weight: 700; color: #ff9a76;">${stats.critChance}%</div></div>
+                                <div><span style="color: var(--hub-text-secondary); font-size: 0.85rem;">SYNERGY</span><div style="font-size: 2rem; font-weight: 700; color: #a78bfa;">${Math.round(stats.synergy)}%</div></div>
+                            </div>
+                        </div>
+                    `;
+                    return statsHtml;
+                }
+            };
+
+            // ============================================
+            // COLLECTION TRACKER (NEW)
+            // ============================================
+
+            const CollectionTracker = {
+                getStats() {
+                    const roster = Storage.getRoster();
+                    const defaultFactions = ["ORDINAL", "INTERLUDE", "CARDINAL"];
+                    
+                    const stats = {
+                        total: roster.length,
+                        byFaction: {},
+                        byRank: {},
+                        customCount: 0,
+                        completionPercent: 0,
+                        rareCount: 0
+                    };
+                    
+                    roster.forEach(char => {
+                        // By Faction
+                        if (!stats.byFaction[char.faction]) stats.byFaction[char.faction] = 0;
+                        stats.byFaction[char.faction]++;
+                        
+                        // By Rank
+                        const rank = normalizeRank(char.rank);
+                        if (!stats.byRank[rank]) stats.byRank[rank] = 0;
+                        stats.byRank[rank]++;
+                        
+                        // Custom count
+                        if (!defaultFactions.includes(char.faction) && char.faction !== "CUSTOM") {
+                            stats.customCount++;
+                        }
+                        
+                        // Rare count (SSR and above)
+                        if (["SSS+", "SSR", "UR", "LR", "EX"].includes(rank)) {
+                            stats.rareCount++;
+                        }
+                    });
+                    
+                    stats.completionPercent = Math.round((roster.length / 50) * 100);
+                    return stats;
+                },
+                renderTrackerPanel() {
+                    const stats = this.getStats();
+                    const html = `
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, var(--hub-surface) 0%, var(--hub-surface-alt) 100%); border: 1px solid var(--hub-border); border-radius: 8px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1.5rem 0; font-family: var(--hub-font-display); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.05em;">Collection Status</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="text-align: center; padding: 1rem; background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 6px;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: var(--hub-accent);">${stats.total}</div>
+                                    <div style="font-size: 0.8rem; color: var(--hub-text-secondary); text-transform: uppercase; margin-top: 0.5rem;">Total Operatives</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 6px;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #ff6b6b;">${stats.rareCount}</div>
+                                    <div style="font-size: 0.8rem; color: var(--hub-text-secondary); text-transform: uppercase; margin-top: 0.5rem;">Rare+ (SSR/SSS+)</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 6px;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #a78bfa;">${Math.min(100, stats.completionPercent)}%</div>
+                                    <div style="font-size: 0.8rem; color: var(--hub-text-secondary); text-transform: uppercase; margin-top: 0.5rem;">Collection %</div>
+                                </div>
+                            </div>
+                            <div style="background: var(--hub-surface); border: 1px solid var(--hub-border); border-radius: 6px; padding: 1rem;">
+                                <div style="font-size: 0.85rem; color: var(--hub-text-secondary); margin-bottom: 0.75rem; font-weight: 700;">BY FACTION</div>
+                                <div style="display: grid; gap: 0.5rem;">
+                                    ${["ORDINAL", "INTERLUDE", "CARDINAL"].map(faction => `
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-size: 0.9rem;">${faction}</span>
+                                            <span style="font-weight: 700; color: var(--hub-accent);">${stats.byFaction[faction] || 0}</span>
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return html;
+                }
+            };
+
+            // ============================================
+            // CHARACTER RELATIONSHIPS (NEW)
+            // ============================================
+
+            const CharacterRelationships = {
+                relationships: {
+                    "default-1": { allies: ["default-2"], rivals: ["default-4"] },
+                    "default-2": { allies: ["default-1"], rivals: ["default-5"] },
+                    "default-3": { allies: ["default-6"], rivals: ["default-7"] },
+                    "default-4": { allies: ["default-7"], rivals: ["default-1"] },
+                    "default-5": { allies: ["default-2"], rivals: ["default-3"] },
+                    "default-6": { allies: ["default-3"], rivals: ["default-4"] },
+                    "default-7": { allies: ["default-4"], rivals: ["default-5"] }
+                },
+                getRelationships(charId) {
+                    return this.relationships[charId] || { allies: [], rivals: [] };
+                },
+                renderRelationshipPanel(roster, currentCharId) {
+                    const rels = this.getRelationships(currentCharId);
+                    const alliesHtml = rels.allies.map(id => {
+                        const ally = roster.find(c => c.id === id);
+                        return ally ? `<div style="padding: 0.5rem 0.75rem; background: #2d5016; border-radius: 4px; font-size: 0.85rem; border-left: 3px solid #6bcf7f;">🤝 ${ally.name}</div>` : "";
+                    }).join("");
+                    const rivalsHtml = rels.rivals.map(id => {
+                        const rival = roster.find(c => c.id === id);
+                        return rival ? `<div style="padding: 0.5rem 0.75rem; background: #4a1f1f; border-radius: 4px; font-size: 0.85rem; border-left: 3px solid #ff6b6b;">⚔️ ${rival.name}</div>` : "";
+                    }).join("");
+                    
+                    if (!alliesHtml && !rivalsHtml) return "";
+                    
+                    return `
+                        <div style="padding: 1.5rem; background: var(--hub-surface-alt); border: 1px solid var(--hub-border); border-radius: 8px; margin-top: 1.5rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.05em;">Faction Relations</h4>
+                            ${alliesHtml ? `<div style="margin-bottom: 1rem;"><div style="font-size: 0.85rem; color: var(--hub-text-secondary); margin-bottom: 0.5rem; font-weight: 700;">ALLIES</div>${alliesHtml}</div>` : ""}
+                            ${rivalsHtml ? `<div><div style="font-size: 0.85rem; color: var(--hub-text-secondary); margin-bottom: 0.5rem; font-weight: 700;">RIVALS</div>${rivalsHtml}</div>` : ""}
+                        </div>
+                    `;
+                }
+            };
+
+            // ============================================
+            // FACTION SYNERGY BONUS SYSTEM (NEW)
+            // ============================================
+
+            const FactionSynergy = {
+                calculateBonus(characters) {
+                    if (characters.length < 2) return { bonus: 0, multiplier: 1 };
+                    
+                    const factionCounts = {};
+                    characters.forEach(char => {
+                        factionCounts[char.faction] = (factionCounts[char.faction] || 0) + 1;
+                    });
+                    
+                    let maxCount = Math.max(...Object.values(factionCounts));
+                    let bonus = (maxCount - 1) * 15; // 15% per additional character from same faction
+                    let multiplier = 1 + (bonus / 100);
+                    
+                    return { bonus, multiplier, primaryFaction: Object.keys(factionCounts).find(f => factionCounts[f] === maxCount) };
+                },
+                displaySynergyBonus(characters) {
+                    const { bonus, multiplier, primaryFaction } = this.calculateBonus(characters);
+                    if (bonus === 0) return "";
+                    
+                    return `
+                        <div style="padding: 1rem; background: linear-gradient(135deg, #2d5016, #1a3a0a); border: 1px solid #6bcf7f; border-radius: 6px; margin-top: 1rem; text-align: center;">
+                            <div style="color: #6bcf7f; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">🎯 FACTION SYNERGY ACTIVE</div>
+                            <div style="font-size: 1.4rem; font-weight: 700; color: #9ef01a; margin-top: 0.5rem;">+${bonus}% Bonus</div>
+                            <div style="font-size: 0.85rem; color: #b0d95b; margin-top: 0.5rem;">${primaryFaction} Synchronized</div>
+                        </div>
+                    `;
+                }
+            };
+
+            // ============================================
+            // ACHIEVEMENT SYSTEM (NEW)
+            // ============================================
+
+            const Achievements = {
+                achievements: [
+                    { id: "first_character", title: "First Operative", desc: "Create your first character", icon: "🎭", check: (r) => r.length >= 1 },
+                    { id: "collector_10", title: "Growing Collection", desc: "Reach 10 operatives", icon: "📦", check: (r) => r.length >= 10 },
+                    { id: "collector_25", title: "Major Collection", desc: "Reach 25 operatives", icon: "🏆", check: (r) => r.length >= 25 },
+                    { id: "rare_hunter", title: "Rare Hunter", desc: "Collect 5 SSR+ characters", icon: "💎", check: (r) => r.filter(c => ["SSS+", "SSR", "UR", "LR", "EX"].includes(normalizeRank(c.rank))).length >= 5 },
+                    { id: "faction_master", title: "Faction Master", desc: "Have 3+ characters from one faction", icon: "⚔️", check: (r) => {const f = {}; r.forEach(c => f[c.faction] = (f[c.faction] || 0) + 1); return Object.values(f).some(v => v >= 3);} },
+                    { id: "all_factions", title: "Diplomatic", desc: "Have characters from all 3 factions", icon: "🌍", check: (r) => {const f = new Set(r.map(c => c.faction)); return f.has("ORDINAL") && f.has("INTERLUDE") && f.has("CARDINAL");} }
+                ],
+                getUnlocked(roster) {
+                    return this.achievements.filter(a => a.check(roster));
+                },
+                renderAchievements(roster) {
+                    const unlocked = this.getUnlocked(roster);
+                    const locked = this.achievements.filter(a => !unlocked.some(u => u.id === a.id));
+                    
+                    const html = `
+                        <div style="padding: 1.5rem; background: var(--hub-surface-alt); border: 1px solid var(--hub-border); border-radius: 8px; margin-top: 2rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-family: var(--hub-font-display); text-transform: uppercase; letter-spacing: 0.05em;">Achievements (${unlocked.length}/${this.achievements.length})</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                                ${unlocked.map(a => `
+                                    <div style="padding: 1rem; background: #1a3a0a; border: 1px solid #6bcf7f; border-radius: 6px; text-align: center; box-shadow: 0 0 12px rgba(107, 207, 127, 0.3);">
+                                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${a.icon}</div>
+                                        <div style="font-size: 0.85rem; font-weight: 700; color: #6bcf7f;">${a.title}</div>
+                                        <div style="font-size: 0.75rem; color: var(--hub-text-secondary); margin-top: 0.5rem;">${a.desc}</div>
+                                    </div>
+                                `).join("")}
+                                ${locked.length > 0 ? locked.slice(0, 2).map(a => `
+                                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px dashed var(--hub-border); border-radius: 6px; text-align: center; opacity: 0.6;">
+                                        <div style="font-size: 2rem; margin-bottom: 0.5rem; filter: grayscale(100%);">🔒</div>
+                                        <div style="font-size: 0.75rem; color: var(--hub-text-secondary);">${a.desc}</div>
+                                    </div>
+                                `).join("") : ""}
+                            </div>
+                        </div>
+                    `;
+                    return html;
+                }
+            };
+
+            // ============================================
+            // ENHANCED MODAL WITH NEW SYSTEMS
+            // ============================================
+
+            const originalOpenModal = openModal;
+            openModal = function(char) {
+                originalOpenModal(char);
+                
+                // Add stats panel after roster info
+                const modalContent = document.querySelector(".modal-content");
+                const showcaseInfo = modalContent.querySelector(".showcase-info");
+                
+                // Insert stats panel
+                const statsPanel = document.createElement("div");
+                statsPanel.innerHTML = CharacterStats.displayStatsModal(char);
+                showcaseInfo.appendChild(statsPanel);
+                
+                // Insert relationships panel
+                const relsPanel = document.createElement("div");
+                relsPanel.innerHTML = CharacterRelationships.renderRelationshipPanel(roster, char.id);
+                if (relsPanel.innerHTML) showcaseInfo.appendChild(relsPanel);
+            };
+
+            // ============================================
+            // ADD COLLECTION TRACKER TO ROSTER
+            // ============================================
+
+            const originalRenderRoster = renderRoster;
+            renderRoster = function() {
+                originalRenderRoster();
+                const grid = document.querySelector(".roster-grid");
+                const trackerPanel = document.createElement("div");
+                trackerPanel.innerHTML = CollectionTracker.renderTrackerPanel();
+                grid.insertAdjacentElement("beforebegin", trackerPanel);
+            };
+
+            // ============================================
+            // UPDATE GACHA DISPLAY WITH SYNERGY
+            // ============================================
+
+            const originalPerformGachaRoll = performGachaRoll;
+            performGachaRoll = async function() {
+                // Show synergy bonus before roll
+                const syncBonus = FactionSynergy.displaySynergyBonus(gachaSequence);
+                if (syncBonus) {
+                    const notif = document.createElement("div");
+                    notif.innerHTML = syncBonus;
+                    notif.style.cssText = "position: fixed; top: 90px; right: 20px; z-index: 998; max-width: 300px;";
+                    document.body.appendChild(notif);
+                    setTimeout(() => notif.remove(), 4000);
+                }
+                
+                return originalPerformGachaRoll();
+            };
+
+            // ============================================
+            // APP INITIALIZATION COMPLETE
+            // ============================================
+
+            console.log("CARRIER: OPERATOR HUB - Full System Initialized");
+            console.log("✓ Character Stats System loaded");
+            console.log("✓ Collection Tracker loaded");
+            console.log("✓ Character Relationships loaded");
+            console.log("✓ Faction Synergy System loaded");
+            console.log("✓ Achievement System loaded");
+        });
+    </script>
+</body>
+</html>
